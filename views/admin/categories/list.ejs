@@ -1,0 +1,36 @@
+<div class="adm-head"><h2>Категории</h2></div>
+
+<% if (error) { %><p class="adm-error"><%= error %></p><% } %>
+
+<div class="adm-cols adm-cols--wide">
+  <div class="adm-panel">
+    <table class="adm-table">
+      <thead><tr><th>Название</th><th>Slug</th><th>Товаров</th><th></th></tr></thead>
+      <tbody>
+        <% categories.forEach(function(c) { %>
+          <tr>
+            <td><%= c.name %></td>
+            <td><code><%= c.slug %></code></td>
+            <td><%= c.product_count %></td>
+            <td class="adm-actions">
+              <a href="/admin/categories/<%= c.id %>/edit">Изм.</a>
+              <form method="POST" action="/admin/categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')">
+                <button type="submit" class="adm-del">Удалить</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="adm-panel">
+    <h3>Новая категория</h3>
+    <form class="adm-form" method="POST" action="/admin/categories">
+      <label class="adm-field">Название<input type="text" name="name" required /></label>
+      <label class="adm-field">Описание<textarea name="description" rows="2"></textarea></label>
+      <label class="adm-field">Фото (URL)<input type="text" name="imageUrl" placeholder="https://..." /></label>
+      <button type="submit" class="adm-btn adm-btn--accent">Добавить</button>
+    </form>
+  </div>
+</div>

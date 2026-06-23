@@ -1,0 +1,23 @@
+<div class="adm-head"><h2>Отзывы <span>(<%= reviews.length %>)</span></h2></div>
+
+<div class="adm-panel">
+  <table class="adm-table">
+    <thead><tr><th>Автор</th><th>Оценка</th><th>Текст</th><th>Товар</th><th>Дата</th><th></th></tr></thead>
+    <tbody>
+      <% reviews.forEach(function(r) { %>
+        <tr>
+          <td><%= r.author_name %></td>
+          <td><%= r.rating %>★</td>
+          <td class="adm-review-text"><%= r.body %></td>
+          <td><%= r.product_name %></td>
+          <td><%= r.created_at.slice(0, 10) %></td>
+          <td class="adm-actions">
+            <form method="POST" action="/admin/reviews/<%= r.id %>/delete" onsubmit="return confirm('Удалить отзыв?')">
+              <button type="submit" class="adm-del">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

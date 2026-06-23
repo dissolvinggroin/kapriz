@@ -1,0 +1,130 @@
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <span class="hero__eyebrow">Коллекция Весна–Лето 2026</span>
+      <h1 class="hero__title">Стиль, в&nbsp;котором <em>хочется жить</em></h1>
+      <p class="hero__text">Женская одежда из натуральных тканей. Лаконичные силуэты, мягкие цвета и качество, которое чувствуешь.</p>
+      <div class="hero__actions">
+        <a href="/catalog" class="btn btn--accent btn--lg">В каталог</a>
+        <a href="/catalog?category=dresses" class="btn btn--ghost btn--lg">Платья</a>
+      </div>
+      <div class="hero__stats">
+        <div><strong><%= stats.products %>+</strong><span>моделей в каталоге</span></div>
+        <div><strong>30 дней</strong><span>на возврат</span></div>
+        <div><strong><%= stats.rating %>★</strong><span>средняя оценка</span></div>
+      </div>
+    </div>
+    <div class="hero__media">
+      <img src="/images/catalog/p1.jpg" alt="Каприз"
+           onerror="this.onerror=null;this.src='<%= picsumFallback() %>'" />
+      <div class="hero__float">
+        <span class="hero__float-label">Новинка</span>
+        <span class="hero__float-text">Платья сезона</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ПРЕИМУЩЕСТВА -->
+<section class="perks">
+  <div class="container perks__grid">
+    <div class="perk"><span class="perk__ic">🚚</span><div><strong>Быстрая доставка</strong><p>По всей России за 1–4 дня</p></div></div>
+    <div class="perk"><span class="perk__ic">↩️</span><div><strong>Лёгкий возврат</strong><p>30 дней без вопросов</p></div></div>
+    <div class="perk"><span class="perk__ic">🔒</span><div><strong>Безопасная оплата</strong><p>Картой, СБП и при получении</p></div></div>
+    <div class="perk"><span class="perk__ic">🌿</span><div><strong>Честные ткани</strong><p>Натуральные материалы</p></div></div>
+  </div>
+</section>
+
+<!-- КАТЕГОРИИ (bento) -->
+<section class="container section">
+  <div class="section__head">
+    <h2 class="section__title">Категории</h2>
+    <a href="/catalog" class="section__link">Весь каталог →</a>
+  </div>
+  <div class="bento">
+    <% categories.forEach(function(cat, i) { %>
+      <a href="/catalog?category=<%= cat.slug %>" class="bento__item bento__item--<%= i %>">
+        <img src="<%= cat.image_url %>" alt="<%= cat.name %>" loading="lazy"
+             onerror="this.onerror=null;this.src='<%= picsumFallback() %>'" />
+        <span class="bento__overlay">
+          <span class="bento__name"><%= cat.name %></span>
+          <span class="bento__count"><%= cat.product_count %> моделей</span>
+        </span>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<!-- НОВИНКИ -->
+<section class="container section">
+  <div class="section__head">
+    <h2 class="section__title">Новинки</h2>
+    <a href="/catalog?sort=newest" class="section__link">Смотреть все →</a>
+  </div>
+  <div class="grid grid--4">
+    <% newArrivals.forEach(function(product) { %>
+      <%- include('partials/product-card', { product, wishlistIds }) %>
+    <% }) %>
+  </div>
+</section>
+
+<!-- ПРОМО (спокойные подборки) -->
+<section class="container">
+  <div class="promo">
+    <div class="promo__card promo__card--a">
+      <span class="promo__eyebrow">Новая коллекция</span>
+      <h3>Платья, в&nbsp;которых<br>хочется кружиться</h3>
+      <a href="/catalog?category=dresses" class="btn btn--light btn--sm">Смотреть платья</a>
+    </div>
+    <div class="promo__card promo__card--b">
+      <span class="promo__eyebrow">Базовый гардероб</span>
+      <h3>Вещи, которые<br>сочетаются со&nbsp;всем</h3>
+      <a href="/catalog?category=clothing" class="btn btn--dark btn--sm">Перейти</a>
+    </div>
+  </div>
+</section>
+
+<!-- SALE (если есть товары со скидкой) -->
+<% if (saleProducts.length) { %>
+<section class="sale-band">
+  <div class="container section">
+    <div class="section__head">
+      <h2 class="section__title">Со скидкой</h2>
+      <a href="/catalog?sale=1" class="section__link">Все скидки →</a>
+    </div>
+    <div class="grid grid--4">
+      <% saleProducts.forEach(function(product) { %>
+        <%- include('partials/product-card', { product, wishlistIds }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- О БРЕНДЕ -->
+<section class="container section editorial">
+  <div class="editorial__media">
+    <img src="/images/catalog/p12.jpg" alt="Каприз"
+         onerror="this.onerror=null;this.src='<%= picsumFallback() %>'" />
+  </div>
+  <div class="editorial__text">
+    <span class="hero__eyebrow">Философия бренда</span>
+    <h2 class="section__title">Меньше вещей — больше смысла</h2>
+    <p>Мы создаём капсульные коллекции женской одежды, которые легко комбинировать между собой. Никакого фаст-фэшна: только проверенные ткани, честные лекала и цвета, проверенные временем.</p>
+    <a href="/about" class="btn btn--dark">Подробнее о бренде</a>
+  </div>
+</section>
+
+<!-- РАССЫЛКА -->
+<section class="newsletter">
+  <div class="container newsletter__inner">
+    <h2>Будьте в курсе новинок</h2>
+    <p>Подпишитесь на рассылку и получите −10% на первый заказ.</p>
+    <form class="newsletter-form newsletter-form--lg" data-newsletter>
+      <label class="sr-only" for="heroEmail">Email для рассылки</label>
+      <input type="email" id="heroEmail" placeholder="Ваш email" required />
+      <button type="submit" class="btn btn--accent">Подписаться</button>
+    </form>
+  </div>
+</section>

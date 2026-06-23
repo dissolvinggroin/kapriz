@@ -1,0 +1,75 @@
+<%
+  var p = product || {};
+  var pCat = p.category_id !== undefined ? p.category_id : p.categoryId;
+  var pSale = p.sale_price !== undefined ? p.sale_price : p.salePrice;
+  var pImg = p.image_url !== undefined ? p.image_url : p.imageUrl;
+  var pNew = p.is_new !== undefined ? p.is_new : p.isNew;
+  var pHit = p.is_bestseller !== undefined ? p.is_bestseller : p.isBestseller;
+  var isEdit = !!p.id;
+%>
+<div class="adm-head">
+  <h2><%= isEdit ? 'Редактирование товара' : 'Новый товар' %></h2>
+  <a href="/admin/products" class="adm-btn">← К списку</a>
+</div>
+
+<% if (error) { %><p class="adm-error"><%= error %></p><% } %>
+
+<form class="adm-form" method="POST" action="<%= isEdit ? '/admin/products/' + p.id : '/admin/products' %>">
+  <div class="adm-form__row">
+    <label class="adm-field">Название
+      <input type="text" name="name" value="<%= p.name || '' %>" required />
+    </label>
+    <label class="adm-field">Категория
+      <select name="categoryId" required>
+        <% categories.forEach(function(c) { %>
+          <option value="<%= c.id %>" <%= String(pCat) === String(c.id) ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
+    </label>
+  </div>
+
+  <div class="adm-form__row">
+    <label class="adm-field">Цена, ₽
+      <input type="number" name="price" value="<%= p.price || '' %>" min="0" step="10" required />
+    </label>
+    <label class="adm-field">Цена со скидкой, ₽ (необязательно)
+      <input type="number" name="salePrice" value="<%= pSale || '' %>" min="0" step="10" />
+    </label>
+  </div>
+
+  <label class="adm-field">Остаток на складе (шт.)
+    <input type="number" name="stock" value="<%= (p.stock !== undefined ? p.stock : 25) %>" min="0" step="1" />
+  </label>
+
+  <div class="adm-form__row">
+    <label class="adm-field">Размеры (через запятую)
+      <input type="text" name="sizes" value="<%= p.sizes || '' %>" placeholder="XS,S,M,L,XL" />
+    </label>
+    <label class="adm-field">Цвета (через запятую)
+      <input type="text" name="colors" value="<%= p.colors || '' %>" placeholder="Чёрный,Белый,Бежевый" />
+    </label>
+  </div>
+
+  <label class="adm-field">Главное фото (URL)
+    <input type="text" name="imageUrl" value="<%= pImg || '' %>" placeholder="/images/catalog/p1.jpg или https://..." />
+  </label>
+
+  <label class="adm-field">Галерея — по одному URL в строке (первый станет главным фото)
+    <textarea name="gallery" rows="3" placeholder="/images/catalog/p1.jpg&#10;/images/catalog/p2.jpg"><%= (typeof images !== 'undefined' && images.length) ? images.map(function(i){return i.url;}).join('\n') : (p.gallery || '') %></textarea>
+  </label>
+
+  <label class="adm-field">Краткое описание
+    <textarea name="description" rows="2"><%= p.description || '' %></textarea>
+  </label>
+
+  <label class="adm-field">Состав и детали
+    <textarea name="details" rows="2"><%= p.details || '' %></textarea>
+  </label>
+
+  <div class="adm-form__checks">
+    <label class="adm-check"><input type="checkbox" name="isNew" value="1" <%= pNew ? 'checked' : '' %>> Новинка</label>
+    <label class="adm-check"><input type="checkbox" name="isBestseller" value="1" <%= pHit ? 'checked' : '' %>> Хит продаж</label>
+  </div>
+
+  <button type="submit" class="adm-btn adm-btn--accent">Сохранить</button>
+</form>

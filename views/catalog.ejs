@@ -1,0 +1,153 @@
+<%
+  // Хелпер: строим query-строку из текущих фильтров с переопределением/удалением ключей
+  function qstr(overrides) {
+    var base = {
+      category: filters.category, q: filters.q, minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice, size: filters.size, color: filters.color,
+      sale: filters.sale, sort: filters.sort,
+    };
+    Object.keys(overrides || {}).forEach(function (k) { base[k] = overrides[k]; });
+    var parts = [];
+    Object.keys(base).forEach(function (k) {
+      if (base[k] !== undefined && base[k] !== null && base[k] !== '') {
+        parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(base[k]));
+      }
+    });
+    return '/catalog' + (parts.length ? '?' + parts.join('&') : '');
+  }
+  var activeCat = filters.category ? categories.find(function(c){ return c.slug === filters.category; }) : null;
+  var chips = [];
+  if (filters.q) chips.push({ label: 'Поиск: ' + filters.q, href: qstr({ q: '' }) });
+  if (activeCat) chips.push({ label: activeCat.name, href: qstr({ category: '' }) });
+  if (filters.size) chips.push({ label: 'Размер: ' + filters.size, href: qstr({ size: '' }) });
+  if (filters.color) chips.push({ label: 'Цвет: ' + filters.color, href: qstr({ color: '' }) });
+  if (filters.minPrice) chips.push({ label: 'от ' + filters.minPrice + ' ₽', href: qstr({ minPrice: '' }) });
+  if (filters.maxPrice) chips.push({ label: 'до ' + filters.maxPrice + ' ₽', href: qstr({ maxPrice: '' }) });
+  if (filters.sale === '1') chips.push({ label: 'Со скидкой', href: qstr({ sale: '' }) });
+%>
+<section class="catalog-hero">
+  <div class="container">
+    <nav class="crumbs"><a href="/">Главная</a> / <span><%= activeCategory ? activeCategory.name : (filters.q ? 'Поиск' : 'Каталог') %></span></nav>
+    <h1 class="catalog-hero__title"><%= filters.q ? ('Поиск: «' + filters.q + '»') : (activeCategory ? activeCategory.name : 'Каталог') %></h1>
+    <% if (activeCategory && activeCategory.description) { %>
+      <p class="catalog-hero__desc"><%= activeCategory.description %></p>
+    <% } %>
+  </div>
+</section>
+
+<section class="container catalog">
+  <button class="btn btn--ghost btn--sm filters-toggle" id="filtersToggle" aria-expanded="false" aria-controls="filtersPanel">Фильтры</button>
+
+  <aside class="filters" id="filtersPanel">
+    <form method="GET" action="/catalog" id="filtersForm">
+      <% if (filters.q) { %><input type="hidden" name="q" value="<%= filters.q %>" /><% } %>
+      <% if (filters.sort) { %><input type="hidden" name="sort" value="<%= filters.sort %>" /><% } %>
+
+      <div class="filters__group">
+        <h4>Категория</h4>
+        <label class="radio"><input type="radio" name="category" value="" <%= !filters.category ? 'checked' : '' %>><span>Все</span></label>
+        <% categories.forEach(function(cat) { %>
+          <label class="radio">
+            <input type="radio" name="category" value="<%= cat.slug %>" <%= filters.category === cat.slug ? 'checked' : '' %>>
+            <span><%= cat.name %> <em><%= cat.product_count %></em></span>
+          </label>
+        <% }) %>
+      </div>
+
+      <div class="filters__group">
+        <h4>Цена, ₽</h4>
+        <div class="filters__price">
+          <label class="sr-only" for="minPrice">Цена от</label>
+          <input type="number" id="minPrice" name="minPrice" placeholder="от" value="<%= filters.minPrice || '' %>" min="0" />
+          <label class="sr-only" for="maxPrice">Цена до</label>
+          <input type="number" id="maxPrice" name="maxPrice" placeholder="до" value="<%= filters.maxPrice || '' %>" min="0" />
+        </div>
+      </div>
+
+      <div class="filters__group">
+        <h4>Размер</h4>
+        <div class="chips">
+          <% facets.sizes.forEach(function(s) { %>
+            <label class="chip">
+              <input type="radio" name="size" value="<%= s %>" <%= filters.size === s ? 'checked' : '' %>>
+              <span><%= s %></span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="filters__group">
+        <h4>Цвет</h4>
+        <div class="color-filters">
+          <% facets.colors.forEach(function(c) { %>
+            <label class="color-filter <%= filters.color === c ? 'is-active' : '' %>" title="<%= c %>">
+              <input type="radio" name="color" value="<%= c %>" <%= filters.color === c ? 'checked' : '' %> hidden>
+              <span class="swatch swatch--lg" style="background: <%= colorHex(c) %>"></span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="filters__group">
+        <label class="check">
+          <input type="checkbox" name="sale" value="1" <%= filters.sale === '1' ? 'checked' : '' %>>
+          <span>Только со скидкой</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn--accent btn--block">Применить</button>
+      <a href="/catalog" class="filters__reset">Сбросить фильтры</a>
+    </form>
+  </aside>
+
+  <div class="catalog__main">
+    <div class="catalog__toolbar">
+      <span class="catalog__count">Найдено: <strong><%= total %></strong></span>
+      <form method="GET" action="/catalog" class="sort-form" id="sortForm">
+        <% ['category','q','minPrice','maxPrice','size','color','sale'].forEach(function(k){ if (filters[k]) { %>
+          <input type="hidden" name="<%= k %>" value="<%= filters[k] %>" />
+        <% }}) %>
+        <label>Сортировка:
+          <select name="sort" onchange="this.form.submit()">
+            <option value="newest" <%= filters.sort === 'newest' || !filters.sort ? 'selected' : '' %>>Новинки</option>
+            <option value="popular" <%= filters.sort === 'popular' ? 'selected' : '' %>>Популярные</option>
+            <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Сначала дешевле</option>
+            <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Сначала дороже</option>
+            <option value="rating" <%= filters.sort === 'rating' ? 'selected' : '' %>>По рейтингу</option>
+          </select>
+        </label>
+      </form>
+    </div>
+
+    <% if (chips.length) { %>
+      <div class="active-chips">
+        <% chips.forEach(function(ch) { %>
+          <a class="active-chip" href="<%= ch.href %>"><%= ch.label %> <span aria-hidden="true">×</span></a>
+        <% }) %>
+        <a class="active-chip active-chip--reset" href="/catalog">Сбросить всё</a>
+      </div>
+    <% } %>
+
+    <% if (products.length === 0) { %>
+      <div class="empty">
+        <p>По выбранным условиям ничего не найдено.</p>
+        <a href="/catalog" class="btn btn--dark">Сбросить фильтры</a>
+      </div>
+    <% } else { %>
+      <div class="grid grid--3" id="productGrid">
+        <% products.forEach(function(product) { %>
+          <%- include('partials/product-card', { product, wishlistIds }) %>
+        <% }) %>
+      </div>
+
+      <% if (hasMore) { %>
+        <div class="load-more">
+          <p class="load-more__info">Показано <%= shown %> из <%= total %></p>
+          <a class="btn btn--dark btn--lg" id="loadMore" href="<%= qstr({ page: page + 1 }) %>" data-next="<%= page + 1 %>">Показать ещё</a>
+        </div>
+      <% } else if (total > 0) { %>
+        <p class="load-more__info">Показаны все <%= total %> товаров</p>
+      <% } %>
+    <% } %>
+  </div>
+</section>

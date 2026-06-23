@@ -1,0 +1,80 @@
+<section class="container account">
+  <h1 class="account__title">Личный кабинет</h1>
+
+  <div class="account__layout">
+    <aside class="account__nav">
+      <div class="account__user">
+        <div class="account__avatar"><%= currentUser.name.charAt(0).toUpperCase() %></div>
+        <div>
+          <strong><%= currentUser.name %></strong>
+          <span><%= currentUser.email %></span>
+        </div>
+      </div>
+      <nav>
+        <a href="/account" class="<%= tab === 'profile' ? 'is-active' : '' %>">Профиль</a>
+        <a href="/account/wishlist" class="<%= tab === 'wishlist' ? 'is-active' : '' %>">Избранное <em><%= wishlist.length %></em></a>
+        <a href="/account/settings" class="<%= tab === 'settings' ? 'is-active' : '' %>">Настройки</a>
+        <a href="/cart">Корзина</a>
+        <% if (currentUser.role === 'admin') { %><a href="/admin">Админ-панель</a><% } %>
+        <a href="/logout">Выйти</a>
+      </nav>
+    </aside>
+
+    <div class="account__content">
+      <% if (notice) { %><p class="form-notice"><%= notice %></p><% } %>
+      <% if (error) { %><p class="form-error"><%= error %></p><% } %>
+
+      <% if (tab === 'profile') { %>
+        <div class="account__panel">
+          <h2>Профиль</h2>
+          <div class="account__fields">
+            <div><span>Имя</span><strong><%= currentUser.name %></strong></div>
+            <div><span>Email</span><strong><%= currentUser.email %></strong></div>
+            <div><span>Дата регистрации</span><strong><%= formatDate(currentUser.created_at) %></strong></div>
+            <div><span>Статус</span><strong><%= currentUser.role === 'admin' ? 'Администратор' : 'Покупатель' %></strong></div>
+          </div>
+        </div>
+
+        <div class="account__panel">
+          <h2>Заказы</h2>
+          <p class="empty">Здесь появятся ваши заказы. Оформление покупки скоро будет доступно.</p>
+          <a href="/account/wishlist" class="btn btn--dark">Моё избранное</a>
+        </div>
+
+      <% } else if (tab === 'settings') { %>
+        <div class="account__panel">
+          <h2>Данные профиля</h2>
+          <form method="POST" action="/account/profile" class="stack-form">
+            <label>Имя<input type="text" name="name" value="<%= currentUser.name %>" required /></label>
+            <label>Email<input type="email" name="email" value="<%= currentUser.email %>" required /></label>
+            <button type="submit" class="btn btn--accent">Сохранить</button>
+          </form>
+        </div>
+
+        <div class="account__panel">
+          <h2>Смена пароля</h2>
+          <form method="POST" action="/account/password" class="stack-form">
+            <label>Текущий пароль<input type="password" name="currentPassword" required /></label>
+            <label>Новый пароль<input type="password" name="newPassword" minlength="6" required /></label>
+            <label>Повторите новый пароль<input type="password" name="confirmPassword" minlength="6" required /></label>
+            <button type="submit" class="btn btn--accent">Изменить пароль</button>
+          </form>
+        </div>
+
+      <% } else { %>
+        <div class="account__panel">
+          <h2>Избранное <span class="reviews__count">(<%= wishlist.length %>)</span></h2>
+          <% if (wishlist.length === 0) { %>
+            <p class="empty">Список избранного пуст. <a href="/catalog">Перейти в каталог →</a></p>
+          <% } else { %>
+            <div class="grid grid--3">
+              <% wishlist.forEach(function(product) { %>
+                <%- include('../partials/product-card', { product, wishlistIds }) %>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>

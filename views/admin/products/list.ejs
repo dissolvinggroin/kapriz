@@ -1,0 +1,52 @@
+<div class="adm-head">
+  <h2>Товары <span>(<%= products.length %>)</span></h2>
+  <a href="/admin/products/new" class="adm-btn adm-btn--accent">+ Добавить товар</a>
+</div>
+
+<form class="adm-toolbar" method="GET" action="/admin/products">
+  <input type="search" name="q" value="<%= filters.q %>" placeholder="Поиск по названию…" />
+  <select name="category" onchange="this.form.submit()">
+    <option value="">Все категории</option>
+    <% categories.forEach(function(c) { %>
+      <option value="<%= c.slug %>" <%= filters.category === c.slug ? 'selected' : '' %>><%= c.name %></option>
+    <% }) %>
+  </select>
+  <button type="submit" class="adm-btn">Искать</button>
+  <% if (filters.q || filters.category) { %><a href="/admin/products" class="adm-reset">Сбросить</a><% } %>
+</form>
+
+<div class="adm-panel">
+  <table class="adm-table">
+    <thead>
+      <tr><th></th><th>Название</th><th>Категория</th><th>Цена</th><th>Скидка</th><th>Остаток</th><th>Метки</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% products.forEach(function(p) { %>
+        <tr>
+          <td><img class="adm-thumb" src="<%= p.image_url %>" alt="" onerror="this.onerror=null;this.src='<%= imageFallback(p.id) %>'" /></td>
+          <td><%= p.name %></td>
+          <td><%= p.category_name %></td>
+          <td><%= formatPrice(p.price) %></td>
+          <td><%= p.sale_price ? formatPrice(p.sale_price) : '—' %></td>
+          <td>
+            <% var st = stockInfo(p.stock); %>
+            <span class="stock-pill stock-pill--<%= st.code %>"><%= p.stock %></span>
+          </td>
+          <td>
+            <% if (p.is_new) { %><span class="tag tag--new">NEW</span><% } %>
+            <% if (p.is_bestseller) { %><span class="tag tag--hit">ХИТ</span><% } %>
+          </td>
+          <td class="adm-actions">
+            <a href="/admin/products/<%= p.id %>/edit">Изм.</a>
+            <form method="POST" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('Удалить товар?')">
+              <button type="submit" class="adm-del">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+      <% if (products.length === 0) { %>
+        <tr><td colspan="8" class="adm-empty">Ничего не найдено.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

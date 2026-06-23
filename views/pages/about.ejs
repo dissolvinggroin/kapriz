@@ -1,0 +1,40 @@
+<section class="page-hero page-hero--about">
+  <div class="container">
+    <span class="hero__eyebrow">О бренде</span>
+    <h1 class="page-hero__title">«Каприз» — это про осознанный стиль</h1>
+    <p class="page-hero__text">Мы создаём одежду, которая служит годами, легко комбинируется и не выходит из моды.</p>
+  </div>
+</section>
+
+<section class="container section editorial">
+  <div class="editorial__media">
+    <img src="/images/catalog/p8.jpg" alt="Каприз"
+         onerror="this.onerror=null;this.src='<%= picsumFallback() %>'" />
+  </div>
+  <div class="editorial__text">
+    <h2 class="section__title">Наша история</h2>
+    <p>«Каприз» начался с простой идеи: в женском гардеробе должно быть меньше вещей, но каждая из них — любимая. Мы отказались от бесконечных коллекций в пользу продуманных капсул, которые сочетаются между собой.</p>
+    <p>Сегодня мы работаем напрямую с проверенными производителями тканей и шьём небольшими партиями, чтобы держать качество под контролем.</p>
+  </div>
+</section>
+
+<section class="container">
+  <div class="values">
+    <div class="value-card"><span class="value-card__num">01</span><h3>Качество</h3><p>Натуральные ткани и честные лекала. Вещи, которые не теряют форму.</p></div>
+    <div class="value-card"><span class="value-card__num">02</span><h3>Осознанность</h3><p>Небольшие партии вместо перепроизводства. Меньше отходов.</p></div>
+    <div class="value-card"><span class="value-card__num">03</span><h3>Стиль вне времени</h3><p>Базовые силуэты и спокойные цвета, которые легко комбинировать.</p></div>
+    <div class="value-card"><span class="value-card__num">04</span><h3>Забота</h3><p>Удобный возврат, поддержка и честные цены без накруток.</p></div>
+  </div>
+</section>
+
+<section class="newsletter">
+  <div class="container newsletter__inner">
+    <h2>Присоединяйтесь к «Капризу»</h2>
+    <p>Новинки, подборки и закрытые распродажи — первыми у подписчиков.</p>
+    <form class="newsletter-form newsletter-form--lg" data-newsletter>
+      <label class="sr-only" for="aboutEmail">Email для рассылки</label>
+      <input type="email" id="aboutEmail" placeholder="Ваш email" required />
+      <button type="submit" class="btn btn--accent">Подписаться</button>
+    </form>
+  </div>
+</section>

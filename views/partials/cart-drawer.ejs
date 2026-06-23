@@ -1,0 +1,34 @@
+<% if (!cart.items.length) { %>
+  <div class="drawer__empty-state">
+    <p class="drawer__empty">Корзина пуста</p>
+    <a href="/catalog" class="btn btn--dark btn--sm">В каталог</a>
+  </div>
+<% } else { %>
+  <div class="drawer__items">
+    <% cart.items.forEach(function(it) { %>
+      <div class="drawer-item">
+        <a href="/catalog/<%= it.product.id %>" class="drawer-item__img">
+          <img src="<%= it.product.image_url %>" alt="<%= it.product.name %>"
+               onerror="this.onerror=null;this.src='<%= imageFallback(it.product.id) %>'" />
+        </a>
+        <div class="drawer-item__info">
+          <a href="/catalog/<%= it.product.id %>" class="drawer-item__name"><%= it.product.name %></a>
+          <p class="drawer-item__meta">
+            <% if (it.size) { %>Размер: <%= it.size %><% } %>
+            <% if (it.color) { %><span> · <%= it.color %></span><% } %>
+            <span> · <%= it.qty %> шт.</span>
+          </p>
+          <p class="drawer-item__price"><%= formatPrice(it.lineTotal) %></p>
+        </div>
+        <form action="/cart/remove" method="POST" class="drawer-item__remove-form" data-ajax-remove>
+          <input type="hidden" name="index" value="<%= it.index %>" />
+          <button type="submit" class="drawer-item__remove" aria-label="Удалить">×</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+  <div class="drawer__foot">
+    <div class="drawer__total"><span>Итого</span><strong><%= formatPrice(cart.total) %></strong></div>
+    <a href="/cart" class="btn btn--dark btn--block">Перейти в корзину</a>
+  </div>
+<% } %>

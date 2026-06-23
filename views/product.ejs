@@ -1,0 +1,236 @@
+<%
+  var hasSale = product.sale_price && product.sale_price < product.price;
+  var disc = hasSale ? discountPercent(product.price, product.sale_price) : 0;
+  var sizes = splitCsv(product.sizes);
+  var colors = splitCsv(product.colors);
+  var saved = (typeof wishlistIds !== 'undefined') && wishlistIds.has(product.id);
+  var stock = stockInfo(product.stock);
+  var needSize = sizes.length && sizes[0] !== 'ONE SIZE';
+  var isShoes = product.category_slug === 'shoes';
+%>
+<section class="container product">
+  <nav class="crumbs">
+    <a href="/">Главная</a> / <a href="/catalog?category=<%= product.category_slug %>"><%= product.category_name %></a> / <span><%= product.name %></span>
+  </nav>
+
+  <div class="product__layout">
+    <!-- ГАЛЕРЕЯ -->
+    <div class="gallery">
+      <div class="gallery__thumbs">
+        <% images.forEach(function(img, i) { %>
+          <button class="gallery__thumb <%= i === 0 ? 'is-active' : '' %>" data-src="<%= img.url %>" type="button" aria-label="Фото <%= i + 1 %>">
+            <img src="<%= img.url %>" alt="" loading="lazy"
+                 onerror="this.onerror=null;this.src='<%= imageFallback(product.id * 10 + i) %>'" />
+          </button>
+        <% }) %>
+      </div>
+      <div class="gallery__main">
+        <% if (product.is_new) { %><span class="badge badge--new gallery__badge">NEW</span><% } %>
+        <% if (hasSale) { %><span class="badge badge--sale gallery__badge gallery__badge--right">−<%= disc %>%</span><% } %>
+        <img id="galleryMain" src="<%= images[0].url %>" alt="<%= product.name %>"
+             onerror="this.onerror=null;this.src='<%= imageFallback(product.id) %>'" />
+      </div>
+    </div>
+
+    <!-- ИНФО -->
+    <div class="product__info">
+      <p class="product__cat"><%= product.category_name %></p>
+      <h1 class="product__title"><%= product.name %></h1>
+
+      <div class="product__rating">
+        <%- include('partials/stars', { value: product.rating }) %>
+        <a href="#reviews" class="product__rating-link"><%= reviewSummary.total %> отзывов</a>
+      </div>
+
+      <div class="product__price">
+        <% if (hasSale) { %>
+          <span class="price price--sale price--xl"><%= formatPrice(product.sale_price) %></span>
+          <span class="price price--old price--lg"><%= formatPrice(product.price) %></span>
+          <span class="badge badge--sale">Выгода <%= formatPrice(product.price - product.sale_price) %></span>
+        <% } else { %>
+          <span class="price price--xl"><%= formatPrice(product.price) %></span>
+        <% } %>
+      </div>
+
+      <p class="stock-line stock-line--<%= stock.code %>">
+        <span class="stock-dot"></span><%= stock.label %>
+      </p>
+
+      <p class="product__desc"><%= product.description %></p>
+
+      <form id="addForm" action="/cart/add" method="POST">
+        <input type="hidden" name="productId" value="<%= product.id %>" />
+        <input type="hidden" name="size" id="sizeInput" value="<%= needSize ? '' : (sizes[0] || '') %>" />
+        <input type="hidden" name="color" id="colorInput" value="<%= colors[0] || '' %>" />
+
+        <% if (colors.length) { %>
+          <div class="selector">
+            <span class="selector__label">Цвет: <em id="colorLabel"><%= colors[0] %></em></span>
+            <div class="selector__colors">
+              <% colors.forEach(function(c, i) { %>
+                <button type="button" class="color-opt <%= i === 0 ? 'is-active' : '' %>" data-color="<%= c %>" title="<%= c %>" aria-label="Цвет <%= c %>">
+                  <span class="swatch swatch--lg" style="background: <%= colorHex(c) %>"></span>
+                </button>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+
+        <% if (sizes.length) { %>
+          <div class="selector">
+            <div class="selector__label-row">
+              <span class="selector__label">Размер</span>
+              <% if (needSize) { %><button type="button" class="size-guide-link" id="sizeGuideBtn">Таблица размеров</button><% } %>
+            </div>
+            <div class="selector__sizes" id="sizeGroup">
+              <% sizes.forEach(function(s, i) { %>
+                <button type="button" class="size-opt <%= (!needSize && i === 0) ? 'is-active' : '' %>" data-size="<%= s %>"><%= s %></button>
+              <% }) %>
+            </div>
+            <p class="size-error" id="sizeError" hidden>Пожалуйста, выберите размер.</p>
+          </div>
+        <% } %>
+
+        <div class="product__actions">
+          <% if (stock.available) { %>
+            <button class="btn btn--accent btn--lg btn--block" id="addToBag" type="submit">Добавить в корзину</button>
+          <% } else { %>
+            <button class="btn btn--lg btn--block" id="addToBag" type="button" disabled>Нет в наличии</button>
+          <% } %>
+          <button class="wish-btn wish-btn--lg <%= saved ? 'is-active' : '' %>" data-id="<%= product.id %>" type="button" aria-label="В избранное">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2 5 5.4 5c2 0 3.3 1.1 4.1 2.3C10.3 6.1 11.6 5 13.6 5 17 5 18.6 8.4 17 11.7 14.5 16.4 12 21 12 21z"/></svg>
+          </button>
+        </div>
+      </form>
+
+      <% if (product.details) { %>
+        <div class="product__details">
+          <h4>Описание и состав</h4>
+          <p><%= product.details %></p>
+        </div>
+      <% } %>
+
+      <ul class="product__perks">
+        <li>🚚 Доставка 1–4 дня</li>
+        <li>↩️ Возврат 30 дней</li>
+        <li>🔒 Безопасная оплата</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ТАБЛИЦА РАЗМЕРОВ -->
+  <dialog class="size-dialog" id="sizeDialog">
+    <div class="size-dialog__head">
+      <h3>Таблица размеров</h3>
+      <button type="button" class="icon-btn" id="sizeDialogClose" aria-label="Закрыть">✕</button>
+    </div>
+    <% if (isShoes) { %>
+      <table class="size-table">
+        <thead><tr><th>RU</th><th>EU</th><th>Длина стопы, см</th></tr></thead>
+        <tbody>
+          <tr><td>36</td><td>37</td><td>23.5</td></tr>
+          <tr><td>38</td><td>39</td><td>24.5</td></tr>
+          <tr><td>40</td><td>41</td><td>25.5</td></tr>
+          <tr><td>42</td><td>43</td><td>26.5</td></tr>
+          <tr><td>44</td><td>45</td><td>27.5</td></tr>
+        </tbody>
+      </table>
+    <% } else { %>
+      <table class="size-table">
+        <thead><tr><th>Размер</th><th>Обхват груди, см</th><th>Обхват талии, см</th></tr></thead>
+        <tbody>
+          <tr><td>XS</td><td>82–86</td><td>62–66</td></tr>
+          <tr><td>S</td><td>86–90</td><td>66–70</td></tr>
+          <tr><td>M</td><td>90–94</td><td>70–74</td></tr>
+          <tr><td>L</td><td>94–100</td><td>74–80</td></tr>
+          <tr><td>XL</td><td>100–106</td><td>80–86</td></tr>
+        </tbody>
+      </table>
+    <% } %>
+    <p class="form-note">Замеры приблизительные. Если сомневаетесь между размерами — берите больший.</p>
+  </dialog>
+
+  <!-- ОТЗЫВЫ -->
+  <div class="reviews" id="reviews">
+    <h2 class="section-title">Отзывы <span class="reviews__count">(<%= reviewSummary.total %>)</span></h2>
+
+    <div class="reviews__layout">
+      <div class="reviews__summary">
+        <div class="reviews__avg"><%= reviewSummary.avg %></div>
+        <%- include('partials/stars', { value: reviewSummary.avg }) %>
+        <p><%= reviewSummary.total %> отзывов</p>
+        <div class="reviews__bars">
+          <% reviewSummary.distribution.forEach(function(d) { %>
+            <div class="reviews__bar">
+              <span><%= d.star %>★</span>
+              <div class="reviews__bar-track"><div class="reviews__bar-fill" style="width: <%= reviewSummary.total ? (d.count / reviewSummary.total * 100) : 0 %>%"></div></div>
+              <em><%= d.count %></em>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="reviews__list">
+        <% if (reviewError) { %><p class="form-error"><%= reviewError %></p><% } %>
+
+        <form class="review-form" method="POST" action="/catalog/<%= product.id %>/reviews">
+          <h4>Оставить отзыв</h4>
+          <div class="review-form__stars" id="ratingPicker">
+            <% for (var r = 1; r <= 5; r++) { %>
+              <button type="button" class="rate-star" data-value="<%= r %>" aria-label="Оценка <%= r %>">
+                <svg viewBox="0 0 24 24" width="26" height="26"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 9l6.8-.6z"/></svg>
+              </button>
+            <% } %>
+            <input type="hidden" name="rating" id="ratingInput" value="5" />
+          </div>
+          <% if (!currentUser) { %>
+            <label class="sr-only" for="authorName">Ваше имя</label>
+            <input type="text" id="authorName" name="authorName" placeholder="Ваше имя" required />
+          <% } %>
+          <label class="sr-only" for="reviewBody">Текст отзыва</label>
+          <textarea id="reviewBody" name="body" rows="3" placeholder="Поделитесь впечатлением о товаре" required></textarea>
+          <button type="submit" class="btn btn--dark">Отправить отзыв</button>
+        </form>
+
+        <% if (reviews.length === 0) { %>
+          <p class="empty">Пока нет отзывов. Будьте первым!</p>
+        <% } else { %>
+          <% reviews.forEach(function(rev) { %>
+            <article class="review">
+              <div class="review__head">
+                <strong><%= rev.author_name %></strong>
+                <%- include('partials/stars', { value: rev.rating }) %>
+              </div>
+              <p class="review__body"><%= rev.body %></p>
+              <span class="review__date"><%= formatDate(rev.created_at) %></span>
+            </article>
+          <% }) %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПОХОЖИЕ -->
+  <% if (related.length) { %>
+    <div class="section">
+      <div class="section__head"><h2 class="section__title">Похожие товары</h2></div>
+      <div class="grid grid--4">
+        <% related.forEach(function(product) { %>
+          <%- include('partials/product-card', { product, wishlistIds }) %>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- НЕДАВНО ПРОСМОТРЕННЫЕ -->
+  <% if (recentlyViewed && recentlyViewed.length) { %>
+    <div class="section">
+      <div class="section__head"><h2 class="section__title">Вы недавно смотрели</h2></div>
+      <div class="grid grid--4">
+        <% recentlyViewed.forEach(function(product) { %>
+          <%- include('partials/product-card', { product, wishlistIds }) %>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+</section>

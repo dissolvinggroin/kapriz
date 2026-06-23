@@ -1,0 +1,31 @@
+# Render Blueprint — деплой в один клик (https://render.com)
+# Импортируется автоматически при подключении репозитория как Blueprint.
+services:
+  - type: web
+    name: kapriz
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true            # Render сам сгенерирует секрет
+      - key: ADMIN_EMAIL
+        value: admin@kapriz.shop
+      - key: ADMIN_PASSWORD
+        sync: false                    # задать вручную при деплое (не хранится в репозитории)
+
+# Бесплатный тариф Render: диск эфемерный, БД пересоздаётся при перезапуске.
+# Каталог восстанавливается автоматически (авто-сид), админ берётся из env.
+# Чтобы данные (новые пользователи/товары) сохранялись навсегда — нужен
+# платный план с persistent disk: добавьте ниже и задайте DATA_DIR=/data
+#
+#    disk:
+#      name: data
+#      mountPath: /data
+#      sizeGB: 1
+#    + envVar DATA_DIR=/data

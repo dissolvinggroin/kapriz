@@ -1,0 +1,44 @@
+<div class="adm-stats">
+  <div class="adm-stat adm-stat--a"><span class="adm-stat__val"><%= stats.products %></span><span class="adm-stat__label">Товаров</span></div>
+  <div class="adm-stat adm-stat--b"><span class="adm-stat__val"><%= stats.categories %></span><span class="adm-stat__label">Категорий</span></div>
+  <div class="adm-stat adm-stat--c"><span class="adm-stat__val"><%= stats.users %></span><span class="adm-stat__label">Пользователей</span></div>
+  <div class="adm-stat adm-stat--d"><span class="adm-stat__val"><%= stats.reviews %></span><span class="adm-stat__label">Отзывов</span></div>
+  <div class="adm-stat adm-stat--e"><span class="adm-stat__val"><%= stats.wishlist %></span><span class="adm-stat__label">В избранном</span></div>
+  <div class="adm-stat adm-stat--b"><span class="adm-stat__val"><%= stats.avgRating %>★</span><span class="adm-stat__label">Средний рейтинг</span></div>
+  <div class="adm-stat adm-stat--a"><span class="adm-stat__val"><%= stats.lowStock %></span><span class="adm-stat__label">Заканчиваются</span></div>
+</div>
+
+<div class="adm-cols">
+  <div class="adm-panel">
+    <h3>Топ в избранном</h3>
+    <% if (topWishlisted.length === 0) { %>
+      <p class="adm-empty">Пока никто не добавлял товары в избранное.</p>
+    <% } else { %>
+      <table class="adm-table">
+        <thead><tr><th>Товар</th><th>Цена</th><th>Добавлений</th></tr></thead>
+        <tbody>
+          <% topWishlisted.forEach(function(p) { %>
+            <tr><td><%= p.name %></td><td><%= formatPrice(p.price) %></td><td><%= p.cnt %></td></tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <div class="adm-panel">
+    <h3>Последние отзывы</h3>
+    <% if (recentReviews.length === 0) { %>
+      <p class="adm-empty">Отзывов пока нет.</p>
+    <% } else { %>
+      <ul class="adm-reviews">
+        <% recentReviews.forEach(function(r) { %>
+          <li>
+            <div class="adm-reviews__top"><strong><%= r.author_name %></strong><span><%= r.rating %>★</span></div>
+            <p><%= r.body %></p>
+            <em><%= r.product_name %></em>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</div>

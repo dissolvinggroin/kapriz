@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= typeof title !== 'undefined' ? title + ' · Каприз Admin' : 'Каприз Admin' %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css?v=<%= assetVer %>" />
+</head>
+<body>
+  <div class="adm">
+    <aside class="adm__side">
+      <a href="/" class="adm__logo">Каприз<span>admin</span></a>
+      <nav class="adm__nav">
+        <a href="/admin" class="<%= currentPath === '/admin' ? 'is-active' : '' %>">📊 Дашборд</a>
+        <a href="/admin/products" class="<%= currentPath.indexOf('/admin/products') === 0 ? 'is-active' : '' %>">👕 Товары</a>
+        <a href="/admin/categories" class="<%= currentPath.indexOf('/admin/categories') === 0 ? 'is-active' : '' %>">🏷️ Категории</a>
+        <a href="/admin/reviews" class="<%= currentPath.indexOf('/admin/reviews') === 0 ? 'is-active' : '' %>">⭐ Отзывы</a>
+        <a href="/admin/users" class="<%= currentPath.indexOf('/admin/users') === 0 ? 'is-active' : '' %>">👤 Пользователи</a>
+      </nav>
+      <a href="/" class="adm__back">← На сайт</a>
+    </aside>
+
+    <div class="adm__main">
+      <header class="adm__top">
+        <strong><%= typeof title !== 'undefined' ? title : '' %></strong>
+        <div class="adm__top-right">
+          <span><%= currentUser.name %></span>
+          <a href="/logout" class="adm__logout">Выйти</a>
+        </div>
+      </header>
+      <main class="adm__content">
+        <%- body %>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

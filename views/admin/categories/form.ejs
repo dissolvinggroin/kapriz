@@ -1,0 +1,19 @@
+<div class="adm-head">
+  <h2>Редактирование категории</h2>
+  <a href="/admin/categories" class="adm-btn">← К списку</a>
+</div>
+
+<% if (error) { %><p class="adm-error"><%= error %></p><% } %>
+
+<form class="adm-form" method="POST" action="/admin/categories/<%= category.id %>">
+  <label class="adm-field">Название
+    <input type="text" name="name" value="<%= category.name || '' %>" required />
+  </label>
+  <label class="adm-field">Описание
+    <textarea name="description" rows="2"><%= category.description || '' %></textarea>
+  </label>
+  <label class="adm-field">Фото (URL)
+    <input type="text" name="imageUrl" value="<%= category.image_url || '' %>" placeholder="/images/catalog/p1.jpg" />
+  </label>
+  <button type="submit" class="adm-btn adm-btn--accent">Сохранить</button>
+</form>

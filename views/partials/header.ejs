@@ -1,0 +1,87 @@
+<div class="announce">
+  <div class="announce__track">
+    <span>Бесплатная доставка от 5 000 ₽</span>
+    <span>•</span>
+    <span>Возврат в течение 30 дней</span>
+    <span>•</span>
+    <span>Новая коллекция уже в продаже</span>
+  </div>
+</div>
+
+<header class="header" id="header">
+  <div class="container header__inner">
+    <button class="icon-btn header__burger" id="navToggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="mainNav">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    </button>
+
+    <a href="/" class="logo">Каприз</a>
+
+    <div class="nav-overlay" id="navOverlay" hidden></div>
+    <nav class="nav" id="mainNav" aria-label="Основная навигация">
+      <div class="nav__head">
+        <span class="nav__title">Меню</span>
+        <button class="icon-btn nav__close" id="navClose" aria-label="Закрыть меню">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <form class="search search--mobile" action="/catalog" method="GET" role="search">
+        <label for="searchMobile" class="sr-only">Поиск товаров</label>
+        <input type="search" id="searchMobile" name="q" placeholder="Поиск…" autocomplete="off" />
+        <button type="submit" class="icon-btn search__btn" aria-label="Искать">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+      <a href="/catalog" class="nav__link nav__link--more <%= currentPath === '/catalog' && !query.category ? 'is-active' : '' %>">Каталог</a>
+      <% navCategories.forEach(function(cat) { %>
+        <a href="/catalog?category=<%= cat.slug %>" class="nav__link <%= query.category === cat.slug ? 'is-active' : '' %>"><%= cat.name %></a>
+      <% }) %>
+      <a href="/catalog?sale=1" class="nav__link nav__link--sale">SALE</a>
+      <a href="/about" class="nav__link nav__link--more">О бренде</a>
+    </nav>
+
+    <div class="header__actions">
+      <form class="search" action="/catalog" method="GET" role="search">
+        <label for="searchInput" class="sr-only">Поиск товаров</label>
+        <input type="search" id="searchInput" name="q" placeholder="Поиск…" value="<%= (currentPath === '/catalog' && query.q) ? query.q : '' %>" autocomplete="off" />
+        <button type="submit" class="icon-btn search__btn" aria-label="Искать">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+
+      <a href="/account/wishlist" class="icon-btn" aria-label="Избранное">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 21s-7.5-4.6-10-9.3C.4 8.4 2 5 5.4 5c2 0 3.3 1.1 4.1 2.3C10.3 6.1 11.6 5 13.6 5 17 5 18.6 8.4 17 11.7 14.5 16.4 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span class="badge-count" id="wishCount" aria-live="polite" <%= wishlistCount > 0 ? '' : 'hidden' %>><%= wishlistCount %></span>
+      </a>
+
+      <button class="icon-btn cart-toggle" id="cartToggle" aria-label="Корзина">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7a3 3 0 0 1 6 0" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        <span class="badge-count" id="cartCount" aria-live="polite" <%= cartCount > 0 ? '' : 'hidden' %>><%= cartCount %></span>
+      </button>
+
+      <% if (currentUser) { %>
+        <a href="/account" class="icon-btn" aria-label="Личный кабинет">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+        </a>
+        <% if (currentUser.role === 'admin') { %>
+          <a href="/admin" class="header__admin-link">Админ</a>
+        <% } %>
+      <% } else { %>
+        <a href="/login" class="header__login">Войти</a>
+      <% } %>
+    </div>
+  </div>
+</header>
+
+<!-- Выезжающая корзина -->
+<div class="drawer-overlay" id="cartOverlay" hidden></div>
+<aside class="drawer" id="cartDrawer" aria-label="Корзина" aria-hidden="true">
+  <div class="drawer__head">
+    <h3>Корзина</h3>
+    <button class="icon-btn" id="cartClose" aria-label="Закрыть">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="drawer__body" id="cartDrawerBody">
+    <p class="drawer__empty">Загрузка…</p>
+  </div>
+</aside>

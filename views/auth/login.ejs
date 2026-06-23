@@ -1,0 +1,17 @@
+<section class="auth">
+  <div class="auth__card">
+    <h1 class="auth__title">Вход</h1>
+    <p class="auth__sub">Рады видеть вас снова в «Капризе»</p>
+
+    <% if (error) { %><p class="form-error"><%= error %></p><% } %>
+
+    <form method="POST" action="/login" class="auth__form">
+      <input type="hidden" name="redirect" value="<%= redirect %>" />
+      <label>Email<input type="email" name="email" value="<%= values.email || '' %>" required autofocus /></label>
+      <label>Пароль<input type="password" name="password" required /></label>
+      <button type="submit" class="btn btn--accent btn--block btn--lg">Войти</button>
+    </form>
+
+    <p class="auth__switch">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+  </div>
+</section>
