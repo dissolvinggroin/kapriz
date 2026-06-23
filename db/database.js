@@ -12,7 +12,11 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const db = new Database(path.join(dataDir, 'shop.sqlite'));
-db.pragma('journal_mode = WAL');
+// WAL ускоряет локально, но на контейнерных ФС (Render и т.п.) бывает источником
+// ошибок ввода-вывода. Включаем WAL только если это явно разрешено.
+if (process.env.SQLITE_WAL === '1') {
+  db.pragma('journal_mode = WAL');
+}
 db.pragma('foreign_keys = ON');
 
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
