@@ -13,11 +13,11 @@
     <aside class="adm__side">
       <a href="/" class="adm__logo">Каприз<span>admin</span></a>
       <nav class="adm__nav">
-        <a href="/admin" class="<%= currentPath === '/admin' ? 'is-active' : '' %>">📊 Дашборд</a>
-        <a href="/admin/products" class="<%= currentPath.indexOf('/admin/products') === 0 ? 'is-active' : '' %>">👕 Товары</a>
-        <a href="/admin/categories" class="<%= currentPath.indexOf('/admin/categories') === 0 ? 'is-active' : '' %>">🏷️ Категории</a>
-        <a href="/admin/reviews" class="<%= currentPath.indexOf('/admin/reviews') === 0 ? 'is-active' : '' %>">⭐ Отзывы</a>
-        <a href="/admin/users" class="<%= currentPath.indexOf('/admin/users') === 0 ? 'is-active' : '' %>">👤 Пользователи</a>
+        <a href="/admin" class="<%= currentPath === '/admin' ? 'is-active' : '' %>"><%- include('../partials/icon', { name: 'dashboard', size: 18 }) %><span>Дашборд</span></a>
+        <a href="/admin/products" class="<%= currentPath.indexOf('/admin/products') === 0 ? 'is-active' : '' %>"><%- include('../partials/icon', { name: 'bag', size: 18 }) %><span>Товары</span></a>
+        <a href="/admin/categories" class="<%= currentPath.indexOf('/admin/categories') === 0 ? 'is-active' : '' %>"><%- include('../partials/icon', { name: 'folder', size: 18 }) %><span>Категории</span></a>
+        <a href="/admin/reviews" class="<%= currentPath.indexOf('/admin/reviews') === 0 ? 'is-active' : '' %>"><%- include('../partials/icon', { name: 'star', size: 18 }) %><span>Отзывы</span></a>
+        <a href="/admin/users" class="<%= currentPath.indexOf('/admin/users') === 0 ? 'is-active' : '' %>"><%- include('../partials/icon', { name: 'user', size: 18 }) %><span>Пользователи</span></a>
       </nav>
       <a href="/" class="adm__back">← На сайт</a>
     </aside>

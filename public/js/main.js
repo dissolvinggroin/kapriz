@@ -276,6 +276,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   var checkoutBtn = document.getElementById('checkoutBtn');
   if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', function () { toast('Онлайн-оплата скоро появится 🙌'); });
+    checkoutBtn.addEventListener('click', function () { toast('Онлайн-оплата скоро появится'); });
   }
 });
