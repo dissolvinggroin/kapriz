@@ -59,6 +59,7 @@
       <p class="product__desc"><%= product.description %></p>
 
       <form id="addForm" action="/cart/add" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
         <input type="hidden" name="productId" value="<%= product.id %>" />
         <input type="hidden" name="size" id="sizeInput" value="<%= needSize ? '' : (sizes[0] || '') %>" />
         <input type="hidden" name="color" id="colorInput" value="<%= colors[0] || '' %>" />
@@ -174,6 +175,7 @@
         <% if (reviewError) { %><p class="form-error"><%= reviewError %></p><% } %>
 
         <form class="review-form" method="POST" action="/catalog/<%= product.id %>/reviews">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <h4>Оставить отзыв</h4>
           <div class="review-form__stars" id="ratingPicker">
             <% for (var r = 1; r <= 5; r++) { %>

@@ -6,6 +6,7 @@
     <% if (error) { %><p class="form-error"><%= error %></p><% } %>
 
     <form method="POST" action="/login" class="auth__form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <input type="hidden" name="redirect" value="<%= redirect %>" />
       <label>Email<input type="email" name="email" value="<%= values.email || '' %>" required autofocus /></label>
       <label>Пароль<input type="password" name="password" required /></label>

@@ -52,8 +52,9 @@ function buildWhere(filters = {}) {
     params.push(`%,${escapeLike(String(size).trim())},%`);
   }
   if (color) {
-    where.push("p.colors LIKE ? ESCAPE '\\'");
-    params.push(`%${escapeLike(color)}%`);
+    // оборачиваем запятыми, чтобы "Синий" не совпадал с "Тёмно-синий"
+    where.push("(',' || REPLACE(p.colors, ' ', '') || ',') LIKE ? ESCAPE '\\'");
+    params.push(`%,${escapeLike(String(color).trim())},%`);
   }
   if (onSale) where.push('p.sale_price IS NOT NULL');
   if (isNew) where.push('p.is_new = 1');

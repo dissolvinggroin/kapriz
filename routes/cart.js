@@ -5,7 +5,10 @@ const productModel = require('../models/productModel');
 const router = express.Router();
 
 function wantsJson(req) {
-  return req.xhr || (req.headers.accept || '').includes('application/json');
+  return (
+    req.get('X-Requested-With') === 'XMLHttpRequest' ||
+    (req.headers.accept || '').includes('application/json')
+  );
 }
 
 // Добавить в корзину

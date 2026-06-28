@@ -37,10 +37,20 @@ function buildProductData(body) {
     colors: normCsv(body.colors),
     isNew: body.isNew ? 1 : 0,
     isBestseller: body.isBestseller ? 1 : 0,
-    stock: Math.max(0, Number(body.stock) || 0),
+    stock: Math.max(0, Math.floor(Number(body.stock) || 0)),
     imageUrl: (body.imageUrl || gallery[0] || '').trim(),
     gallery,
   };
+}
+
+// Возвращает текст ошибки или null
+function validateProduct(data) {
+  if (!data.name) return 'Укажите название товара.';
+  if (!Number.isFinite(data.price) || data.price <= 0) return 'Цена должна быть положительным числом.';
+  if (!Number.isFinite(data.categoryId) || !categoryModel.getById(data.categoryId)) {
+    return 'Выберите существующую категорию.';
+  }
+  return null;
 }
 
 // Dashboard
@@ -84,13 +94,14 @@ router.get('/products/new', (req, res) => {
 
 router.post('/products', (req, res) => {
   const data = buildProductData(req.body);
-  if (!data.name || !data.categoryId || !data.price) {
+  const error = validateProduct(data);
+  if (error) {
     return res.status(400).render('admin/products/form', {
       title: 'Новый товар',
       product: req.body,
       images: [],
       categories: categoryModel.getAll(),
-      error: 'Заполните название, категорию и цену.',
+      error,
     });
   }
   if (!data.imageUrl) {
@@ -113,15 +124,17 @@ router.get('/products/:id/edit', (req, res, next) => {
   });
 });
 
-router.post('/products/:id', (req, res) => {
+router.post('/products/:id', (req, res, next) => {
+  if (!productModel.getProductById(req.params.id)) return next();
   const data = buildProductData(req.body);
-  if (!data.name || !data.categoryId || !data.price) {
+  const error = validateProduct(data);
+  if (error) {
     return res.status(400).render('admin/products/form', {
       title: 'Редактирование товара',
       product: { id: req.params.id, ...req.body },
       images: productModel.getProductImages(req.params.id),
       categories: categoryModel.getAll(),
-      error: 'Заполните название, категорию и цену.',
+      error,
     });
   }
   productModel.updateProduct(req.params.id, data);
@@ -174,7 +187,12 @@ router.post('/categories/:id/delete', (req, res) => {
   if (categoryModel.countProducts(req.params.id) > 0) {
     return renderCategories(res, 'Нельзя удалить категорию с товарами. Сначала удалите товары.', 400);
   }
-  categoryModel.remove(req.params.id);
+  try {
+    categoryModel.remove(req.params.id);
+  } catch (e) {
+    // на случай гонки: товар добавили между проверкой и удалением
+    return renderCategories(res, 'Не удалось удалить: в категории есть товары.', 400);
+  }
   res.redirect('/admin/categories');
 });
 

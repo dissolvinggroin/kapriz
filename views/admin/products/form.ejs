@@ -15,6 +15,7 @@
 <% if (error) { %><p class="adm-error"><%= error %></p><% } %>
 
 <form class="adm-form" method="POST" action="<%= isEdit ? '/admin/products/' + p.id : '/admin/products' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <div class="adm-form__row">
     <label class="adm-field">Название
       <input type="text" name="name" value="<%= p.name || '' %>" required />

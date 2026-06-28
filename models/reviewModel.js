@@ -34,8 +34,8 @@ function count() {
   return db.prepare('SELECT COUNT(*) AS c FROM reviews').get().c;
 }
 
-function summary(productId) {
-  const rows = getByProduct(productId);
+function summary(productId, prefetched) {
+  const rows = prefetched || getByProduct(productId);
   const total = rows.length;
   const avg = total ? rows.reduce((s, r) => s + r.rating, 0) / total : 0;
   const distribution = [5, 4, 3, 2, 1].map((star) => ({

@@ -6,6 +6,7 @@
     <% if (error) { %><p class="form-error"><%= error %></p><% } %>
 
     <form method="POST" action="/register" class="auth__form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <label>Имя<input type="text" name="name" value="<%= values.name || '' %>" required autofocus /></label>
       <label>Email<input type="email" name="email" value="<%= values.email || '' %>" required /></label>
       <label>Пароль<input type="password" name="password" required minlength="6" /></label>

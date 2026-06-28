@@ -28,10 +28,11 @@ router.get('/settings', (req, res) => renderAccount(res, 'settings'));
 // Обновление профиля (имя, email)
 router.post('/profile', (req, res) => {
   const name = (req.body.name || '').trim();
-  const email = (req.body.email || '').trim();
+  const email = (req.body.email || '').trim().toLowerCase();
   const userId = res.locals.currentUser.id;
 
   if (!name || !email) return renderAccount(res, 'settings', { error: 'Имя и email обязательны.' });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return renderAccount(res, 'settings', { error: 'Некорректный email.' });
   const existing = userModel.findByEmail(email);
   if (existing && existing.id !== userId) {
     return renderAccount(res, 'settings', { error: 'Этот email уже занят.' });

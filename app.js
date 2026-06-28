@@ -76,6 +76,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(require('./middleware/csrf'));
+
 app.use('/', require('./routes/index'));
 app.use('/catalog', require('./routes/catalog'));
 app.use('/cart', require('./routes/cart'));

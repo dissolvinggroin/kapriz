@@ -39,6 +39,7 @@
           <td class="adm-actions">
             <a href="/admin/products/<%= p.id %>/edit">Изм.</a>
             <form method="POST" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('Удалить товар?')">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
               <button type="submit" class="adm-del">Удалить</button>
             </form>
           </td>

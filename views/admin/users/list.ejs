@@ -9,9 +9,10 @@
           <td><%= u.name %></td>
           <td><%= u.email %></td>
           <td><span class="tag <%= u.role === 'admin' ? 'tag--hit' : '' %>"><%= u.role === 'admin' ? 'Админ' : 'Покупатель' %></span></td>
-          <td><%= u.created_at.slice(0, 10) %></td>
+          <td><%= formatDate(u.created_at) %></td>
         </tr>
       <% }) %>
+      <% if (users.length === 0) { %><tr><td colspan="4" class="adm-empty">Пока нет пользователей.</td></tr><% } %>
     </tbody>
   </table>
 </div>

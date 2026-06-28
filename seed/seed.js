@@ -2,7 +2,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const db = require('../db/database');
 const { CATEGORIES, PRODUCTS, REVIEW_SNIPPETS } = require('./catalogData');
-const { slugify, localImage, IMAGE_POOL } = require('../utils/format');
+const { slugify } = require('../utils/format');
 
 function clear() {
   db.prepare('DELETE FROM wishlist').run();
@@ -50,7 +50,7 @@ function seedProductsAndReviews(slugToId) {
       const categoryId = slugToId[slug];
       items.forEach((item, idx) => {
         globalIndex += 1;
-        const [name, price, kw, sizes, colors, description, details] = item;
+        const [name, price, , sizes, colors, description, details] = item;
 
         // Скидки и новинки — умеренно, без перегруза «акциями»
         const onSale = globalIndex % 6 === 0;         // примерно каждый шестой
@@ -114,7 +114,12 @@ function seedProductsAndReviews(slugToId) {
 }
 
 function seedAdmin() {
-  const email = process.env.ADMIN_EMAIL || 'admin@kapriz.shop';
+  const email = (process.env.ADMIN_EMAIL || 'admin@kapriz.shop').trim().toLowerCase();
+  // В проде НЕ создаём админа с известным дефолтным паролем
+  if (!process.env.ADMIN_PASSWORD && process.env.NODE_ENV === 'production') {
+    console.warn('ADMIN_PASSWORD не задан — админ в продакшене не создан. Задайте переменную и пересоздайте.');
+    return { email, password: '(не задан)' };
+  }
   const password = process.env.ADMIN_PASSWORD || 'admin123';
   const passwordHash = bcrypt.hashSync(password, 10);
 
@@ -135,9 +140,13 @@ function seedAdmin() {
 }
 
 function runSeed() {
-  clear();
-  const slugToId = seedCategories();
-  const { productCount, reviewCount } = seedProductsAndReviews(slugToId);
+  // весь каталог наполняем атомарно — при сбое БД не останется полупустой
+  const seedCatalog = db.transaction(() => {
+    clear();
+    const slugToId = seedCategories();
+    return seedProductsAndReviews(slugToId);
+  });
+  const { productCount, reviewCount } = seedCatalog();
   const admin = seedAdmin();
 
   console.log(`✓ Категорий: ${CATEGORIES.length}`);

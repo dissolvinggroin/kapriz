@@ -6,6 +6,7 @@
 <% if (error) { %><p class="adm-error"><%= error %></p><% } %>
 
 <form class="adm-form" method="POST" action="/admin/categories/<%= category.id %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <label class="adm-field">Название
     <input type="text" name="name" value="<%= category.name || '' %>" required />
   </label>

@@ -10,7 +10,6 @@ const PAGE_SIZE = 12;
 
 router.get('/', (req, res) => {
   const { category, q, minPrice, maxPrice, size, color, sale, sort } = req.query;
-  const page = Math.max(1, Number(req.query.page) || 1);
   const userId = res.locals.currentUser ? res.locals.currentUser.id : null;
 
   const filters = {
@@ -25,6 +24,8 @@ router.get('/', (req, res) => {
   };
 
   const total = productModel.countFiltered(filters);
+  const maxPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(Math.max(1, Number(req.query.page) || 1), maxPage);
   const products = productModel.getProducts({
     ...filters,
     limit: PAGE_SIZE,
@@ -91,13 +92,14 @@ function renderProduct(req, res, product, reviewError, status) {
   const recentlyViewed = productModel.getByIds(prev.filter((id) => id !== product.id).slice(0, 4));
   req.session.recent = [product.id, ...prev.filter((id) => id !== product.id)].slice(0, 8);
 
+  const reviews = reviewModel.getByProduct(product.id);
   res.status(status).render('product', {
     title: product.name,
     product,
     images,
     related: productModel.getRelated(product, 4),
-    reviews: reviewModel.getByProduct(product.id),
-    reviewSummary: reviewModel.summary(product.id),
+    reviews,
+    reviewSummary: reviewModel.summary(product.id, reviews),
     wishlistIds: wishlistModel.getIds(userId),
     inWishlist: wishlistModel.has(userId, product.id),
     recentlyViewed,

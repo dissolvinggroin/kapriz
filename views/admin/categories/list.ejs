@@ -15,6 +15,7 @@
             <td class="adm-actions">
               <a href="/admin/categories/<%= c.id %>/edit">Изм.</a>
               <form method="POST" action="/admin/categories/<%= c.id %>/delete" onsubmit="return confirm('Удалить категорию?')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <button type="submit" class="adm-del">Удалить</button>
               </form>
             </td>
@@ -27,6 +28,7 @@
   <div class="adm-panel">
     <h3>Новая категория</h3>
     <form class="adm-form" method="POST" action="/admin/categories">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <label class="adm-field">Название<input type="text" name="name" required /></label>
       <label class="adm-field">Описание<textarea name="description" rows="2"></textarea></label>
       <label class="adm-field">Фото (URL)<input type="text" name="imageUrl" placeholder="https://..." /></label>

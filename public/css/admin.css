@@ -1,5 +1,5 @@
 :root {
-  --ink: #1c1814; --bg: #f4f2ee; --card: #fff; --muted: #8c8378;
+  --ink: #1c1814; --bg: #f4f2ee; --card: #fff; --muted: #6e655b;
   --line: #e6e0d6; --accent: #e8553a; --teal: #0e6b5c; --gold: #c9a227;
   --berry: #7a3b69; --radius: 12px; --sans: 'Manrope', system-ui, sans-serif;
 }
@@ -36,7 +36,7 @@ table { border-collapse: collapse; width: 100%; }
 .adm-btn--accent { background: var(--accent); color: #fff; border-color: var(--accent); }
 .adm-btn--accent:hover { background: #c8401f; }
 
-.adm-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 30px; }
+.adm-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 30px; }
 .adm-stat { background: #fff; border-radius: var(--radius); padding: 22px; box-shadow: 0 6px 20px rgba(28,24,20,.05); position: relative; overflow: hidden; }
 .adm-stat::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
 .adm-stat--a::before { background: var(--accent); }

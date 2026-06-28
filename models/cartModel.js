@@ -12,21 +12,29 @@ function keyMatch(item, productId, size, color) {
   return item.productId === productId && item.size === (size || '') && item.color === (color || '');
 }
 
+function stockOf(productId) {
+  const p = productModel.getProductById(productId);
+  return p ? Math.max(0, p.stock) : 0;
+}
+
 function add(session, productId, { size, color, qty = 1 } = {}) {
   const cart = getRaw(session);
   const pid = Number(productId);
+  const max = stockOf(pid);
+  if (max <= 0) return;
   const existing = cart.find((i) => keyMatch(i, pid, size, color));
   if (existing) {
-    existing.qty += qty;
+    existing.qty = Math.min(existing.qty + qty, max);
   } else {
-    cart.push({ productId: pid, size: size || '', color: color || '', qty });
+    cart.push({ productId: pid, size: size || '', color: color || '', qty: Math.min(qty, max) });
   }
 }
 
 function setQty(session, index, qty) {
   const cart = getRaw(session);
   if (cart[index]) {
-    cart[index].qty = Math.max(1, Number(qty) || 1);
+    const max = stockOf(cart[index].productId) || 1;
+    cart[index].qty = Math.min(Math.max(1, Math.floor(Number(qty) || 1)), max);
   }
 }
 

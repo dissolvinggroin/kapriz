@@ -21,6 +21,7 @@
           <p class="drawer-item__price"><%= formatPrice(it.lineTotal) %></p>
         </div>
         <form action="/cart/remove" method="POST" class="drawer-item__remove-form" data-ajax-remove>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <input type="hidden" name="index" value="<%= it.index %>" />
           <button type="submit" class="drawer-item__remove" aria-label="Удалить">×</button>
         </form>

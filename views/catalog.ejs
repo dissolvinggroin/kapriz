@@ -41,7 +41,6 @@
   <aside class="filters" id="filtersPanel">
     <form method="GET" action="/catalog" id="filtersForm">
       <% if (filters.q) { %><input type="hidden" name="q" value="<%= filters.q %>" /><% } %>
-      <% if (filters.sort) { %><input type="hidden" name="sort" value="<%= filters.sort %>" /><% } %>
 
       <div class="filters__group">
         <h4>Категория</h4>
@@ -103,20 +102,15 @@
   <div class="catalog__main">
     <div class="catalog__toolbar">
       <span class="catalog__count">Найдено: <strong><%= total %></strong></span>
-      <form method="GET" action="/catalog" class="sort-form" id="sortForm">
-        <% ['category','q','minPrice','maxPrice','size','color','sale'].forEach(function(k){ if (filters[k]) { %>
-          <input type="hidden" name="<%= k %>" value="<%= filters[k] %>" />
-        <% }}) %>
-        <label>Сортировка:
-          <select name="sort" onchange="this.form.submit()">
-            <option value="newest" <%= filters.sort === 'newest' || !filters.sort ? 'selected' : '' %>>Новинки</option>
-            <option value="popular" <%= filters.sort === 'popular' ? 'selected' : '' %>>Популярные</option>
-            <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Сначала дешевле</option>
-            <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Сначала дороже</option>
-            <option value="rating" <%= filters.sort === 'rating' ? 'selected' : '' %>>По рейтингу</option>
-          </select>
-        </label>
-      </form>
+      <label class="sort-form">Сортировка:
+        <select name="sort" form="filtersForm" onchange="document.getElementById('filtersForm').submit()">
+          <option value="newest" <%= filters.sort === 'newest' || !filters.sort ? 'selected' : '' %>>Новинки</option>
+          <option value="popular" <%= filters.sort === 'popular' ? 'selected' : '' %>>Популярные</option>
+          <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>Сначала дешевле</option>
+          <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>Сначала дороже</option>
+          <option value="rating" <%= filters.sort === 'rating' ? 'selected' : '' %>>По рейтингу</option>
+        </select>
+      </label>
     </div>
 
     <% if (chips.length) { %>

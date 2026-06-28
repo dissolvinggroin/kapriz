@@ -10,14 +10,16 @@
           <td><%= r.rating %>★</td>
           <td class="adm-review-text"><%= r.body %></td>
           <td><%= r.product_name %></td>
-          <td><%= r.created_at.slice(0, 10) %></td>
+          <td><%= formatDate(r.created_at) %></td>
           <td class="adm-actions">
             <form method="POST" action="/admin/reviews/<%= r.id %>/delete" onsubmit="return confirm('Удалить отзыв?')">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
               <button type="submit" class="adm-del">Удалить</button>
             </form>
           </td>
         </tr>
       <% }) %>
+      <% if (reviews.length === 0) { %><tr><td colspan="6" class="adm-empty">Пока нет отзывов.</td></tr><% } %>
     </tbody>
   </table>
 </div>

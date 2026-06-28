@@ -45,6 +45,7 @@
         <div class="account__panel">
           <h2>Данные профиля</h2>
           <form method="POST" action="/account/profile" class="stack-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <label>Имя<input type="text" name="name" value="<%= currentUser.name %>" required /></label>
             <label>Email<input type="email" name="email" value="<%= currentUser.email %>" required /></label>
             <button type="submit" class="btn btn--accent">Сохранить</button>
@@ -54,6 +55,7 @@
         <div class="account__panel">
           <h2>Смена пароля</h2>
           <form method="POST" action="/account/password" class="stack-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
             <label>Текущий пароль<input type="password" name="currentPassword" required /></label>
             <label>Новый пароль<input type="password" name="newPassword" minlength="6" required /></label>
             <label>Повторите новый пароль<input type="password" name="confirmPassword" minlength="6" required /></label>

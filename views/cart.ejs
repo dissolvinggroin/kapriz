@@ -27,13 +27,15 @@
             </div>
             <div class="cart-row__side">
               <form action="/cart/update" method="POST" class="qty-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <input type="hidden" name="index" value="<%= it.index %>" />
                 <label class="sr-only" for="qty<%= it.index %>">Количество</label>
-                <input type="number" id="qty<%= it.index %>" name="qty" value="<%= it.qty %>" min="1" max="<%= it.product.stock %>" />
+                <input type="number" id="qty<%= it.index %>" name="qty" value="<%= it.qty %>" min="1" max="<%= Math.max(it.qty, it.product.stock) %>" />
                 <button type="submit" class="btn btn--ghost btn--sm">Обновить</button>
               </form>
               <p class="cart-row__total"><%= formatPrice(it.lineTotal) %></p>
               <form action="/cart/remove" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <input type="hidden" name="index" value="<%= it.index %>" />
                 <button type="submit" class="link-remove">Удалить</button>
               </form>
