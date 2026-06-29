@@ -6,7 +6,10 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    buildCommand: npm install
+    # npm ci ставит зависимости с нуля (удаляет node_modules), чтобы нативные
+    # модули (better-sqlite3, bcrypt) всегда собирались под текущую версию Node
+    # и не было рассинхрона ABI из закэшированной сборки.
+    buildCommand: npm ci
     startCommand: npm start
     autoDeploy: true
     envVars:
