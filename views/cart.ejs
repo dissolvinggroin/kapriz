@@ -49,8 +49,11 @@
         <div class="cart-summary__row"><span>Товары (<%= cart.count %>)</span><span><%= formatPrice(cart.total) %></span></div>
         <div class="cart-summary__row"><span>Доставка</span><span><%= cart.total >= 5000 ? 'Бесплатно' : '300 ₽' %></span></div>
         <div class="cart-summary__total"><span>К оплате</span><strong><%= formatPrice(cart.total >= 5000 ? cart.total : cart.total + 300) %></strong></div>
-        <button class="btn btn--accent btn--block btn--lg" id="checkoutBtn">Оформить заказ</button>
-        <p class="form-note">Онлайн-оплата скоро появится. Сейчас оформление — демонстрационное.</p>
+        <form action="/cart/checkout" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button type="submit" class="btn btn--accent btn--block btn--lg">Оформить заказ</button>
+        </form>
+        <p class="form-note">Оплата картой, СБП или при получении. Безопасная сделка.</p>
         <a href="/catalog" class="cart-summary__continue">← Продолжить покупки</a>
       </aside>
     </div>

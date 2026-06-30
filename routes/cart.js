@@ -49,6 +49,15 @@ router.get('/', (req, res) => {
   res.render('cart', { title: 'Корзина', cart: cartModel.detailed(req.session) });
 });
 
+// Оформление заказа
+router.post('/checkout', (req, res) => {
+  const data = cartModel.detailed(req.session);
+  if (!data.items.length) return res.redirect('/cart');
+  const orderNumber = 'KP-' + Date.now().toString().slice(-6);
+  cartModel.clear(req.session);
+  res.render('cart-success', { title: 'Заказ оформлен', orderNumber });
+});
+
 // HTML выезжающей панели — подгружается AJAX-ом, без основного лейаута
 router.get('/drawer', (req, res) => {
   res.render('partials/cart-drawer', { layout: false, cart: cartModel.detailed(req.session) });

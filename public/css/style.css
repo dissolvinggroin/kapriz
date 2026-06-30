@@ -570,3 +570,11 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; }
   .section { margin: 44px auto; }
   .section__head { margin-bottom: 20px; }
 }
+
+/* ===== ОФОРМЛЕНИЕ ЗАКАЗА (успех) ===== */
+.order-success { text-align: center; padding: 80px 24px 100px; max-width: 560px; }
+.order-success__icon { color: var(--teal); display: inline-flex; margin-bottom: 18px; }
+.order-success h1 { font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; }
+.order-success__num { margin: 14px 0 6px; font-size: 1.05rem; }
+.order-success__text { color: #6a6157; margin-bottom: 28px; }
+.order-success__actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }

@@ -309,8 +309,4 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('[data-contact]').forEach(function (form) {
     form.addEventListener('submit', function (e) { e.preventDefault(); form.reset(); toast('Сообщение отправлено!'); });
   });
-  var checkoutBtn = document.getElementById('checkoutBtn');
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', function () { toast('Онлайн-оплата скоро появится'); });
-  }
 });
