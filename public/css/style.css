@@ -394,6 +394,8 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; }
   .header__inner { gap: 10px; }
   .header__actions { gap: 0; }
   .header__login { font-size: .82rem; padding: 7px 12px; }
+  /* В бургер-режиме админ-ссылка убрана из шапки (доступна в кабинете) */
+  .header__admin-link { display: none; }
 
   .header__burger { display: inline-flex; }
 
@@ -524,6 +526,24 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; }
 .cart-summary__total strong { font-family: var(--serif); }
 .cart-summary__continue { display: block; text-align: center; margin-top: 14px; color: var(--muted); font-size: .9rem; }
 
+@media (max-width: 560px) {
+  .cart-page { padding: 24px 14px 60px; }
+  /* строка товара: фото + инфо сверху, управление во всю ширину снизу */
+  .cart-row { grid-template-columns: 84px 1fr; gap: 14px; }
+  .cart-row__img img { width: 84px; height: 112px; }
+  .cart-row__side { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; text-align: left; gap: 10px 14px; }
+
+  /* строка заказа в кабинете: номер+дата и сумма сверху, статус снизу */
+  .order-row { grid-template-columns: 1fr auto; gap: 8px 12px; }
+  .order-row__main { grid-column: 1; grid-row: 1; }
+  .order-row__total { grid-column: 2; grid-row: 1; align-self: center; white-space: nowrap; }
+  .order-row .order-status { grid-column: 1 / -1; grid-row: 2; justify-self: start; }
+
+  /* блок ценностей — в одну колонку, длинные слова переносятся */
+  .values { grid-template-columns: 1fr; }
+  .value-card { padding: 22px; min-width: 0; overflow-wrap: break-word; }
+}
+
 /* ===== УВЕДОМЛЕНИЯ / ТОСТ ===== */
 .form-notice { background: #e8f5ee; color: var(--teal); padding: 11px 16px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: .9rem; }
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 13px 22px; border-radius: 999px; font-weight: 600; font-size: .9rem; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: .3s ease; z-index: 90; }
@@ -597,7 +617,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; }
 .order-row__total { font-weight: 800; }
 
 /* Страница заказа */
-.order-detail { padding: 24px 0 70px; max-width: 940px; }
+.order-detail { padding-top: 24px; padding-bottom: 70px; max-width: 940px; }
 .order-detail__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin: 10px 0 26px; }
 .order-detail__head h1 { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; }
 .order-detail__date { color: var(--muted); margin-top: 4px; }

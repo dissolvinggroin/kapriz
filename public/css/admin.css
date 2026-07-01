@@ -114,10 +114,31 @@ table { border-collapse: collapse; width: 100%; }
 .adm-status-form select { padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 9px; font-family: inherit; font-size: .92rem; }
 
 @media (max-width: 900px) {
-  .adm__side { width: 64px; padding: 20px 8px; }
+  .adm__side { width: 60px; padding: 18px 6px; }
   .adm__logo span, .adm__nav a span, .adm__back { display: none; }
-  .adm__logo { font-size: 1rem; text-align: center; }
+  .adm__logo { font-size: .8rem; text-align: center; letter-spacing: .03em; overflow: hidden; margin-bottom: 22px; }
   .adm__nav a { justify-content: center; padding: 12px 6px; }
-  .adm-stats { grid-template-columns: 1fr 1fr; }
+  .adm__top { padding: 12px 16px; }
+  .adm__top strong { font-size: 1rem; }
+  .adm__top-right span { display: none; }
+  .adm__content { padding: 18px 14px 48px; }
+
+  .adm-stats { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+  .adm-stat { padding: 16px 14px; }
+  .adm-stat__val { font-size: 1.6rem; }
   .adm-cols, .adm-cols--wide, .adm-form__row { grid-template-columns: 1fr; }
+  .adm-head h2 { font-size: 1.2rem; }
+
+  /* Таблицы прокручиваются по горизонтали, а не обрезаются */
+  .adm-panel { padding: 16px; }
+  .adm-table-wrap, .adm-panel { overflow-x: auto; }
+  .adm-table { min-width: 520px; }
+  .adm-review-text { max-width: none; }
+
+  /* Тулбар товаров — в столбик, поля на всю ширину */
+  .adm-toolbar { flex-direction: column; align-items: stretch; }
+  .adm-toolbar input, .adm-toolbar select { min-width: 0; width: 100%; }
+  .adm-form { padding: 18px; }
+  .adm-order-totals { max-width: none; }
+  .adm-status-form select { flex: 1; }
 }
