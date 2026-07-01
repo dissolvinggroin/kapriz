@@ -12,7 +12,7 @@ function rateLimit({ windowMs = 15 * 60 * 1000, max = 10, message = 'Слишк�
   }, windowMs).unref();
 
   return function (req, res, next) {
-    const key = req.ip || req.connection.remoteAddress || 'unknown';
+    const key = req.ip || (req.socket && req.socket.remoteAddress) || 'unknown';
     const now = Date.now();
     let rec = hits.get(key);
     if (!rec || now > rec.reset) {

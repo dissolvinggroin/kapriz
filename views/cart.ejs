@@ -1,6 +1,10 @@
 <section class="container cart-page">
   <nav class="crumbs"><a href="/">Главная</a> / <span>Корзина</span></nav>
-  <h1 class="section-title">Корзина</h1>
+  <h1 class="section__title">Корзина</h1>
+
+  <% if (typeof checkoutError !== 'undefined' && checkoutError) { %>
+    <p class="form-error"><%= checkoutError %></p>
+  <% } %>
 
   <% if (!cart.items.length) { %>
     <div class="empty">

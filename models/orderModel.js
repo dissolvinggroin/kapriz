@@ -14,7 +14,8 @@ function statusLabel(key) {
   return STATUS_MAP[key] || key;
 }
 
-// Создание заказа с позициями — в транзакции
+// Создание заказа с позициями — в транзакции.
+// Атомарно списывает остатки: если товара не хватает, вся транзакция откатывается.
 const createOrder = db.transaction((order, items) => {
   const res = db
     .prepare(
@@ -27,9 +28,20 @@ const createOrder = db.transaction((order, items) => {
     `INSERT INTO order_items (order_id, product_id, product_name, size, color, qty, unit_price)
      VALUES (?, ?, ?, ?, ?, ?, ?)`
   );
-  items.forEach((it) =>
-    insItem.run(orderId, it.productId, it.productName, it.size || '', it.color || '', it.qty, it.unitPrice)
-  );
+  const decStock = db.prepare('UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?');
+  items.forEach((it) => {
+    if (it.productId) {
+      const r = decStock.run(it.qty, it.productId, it.qty);
+      if (r.changes === 0) {
+        // остатка не хватило — прерываем, транзакция откатится
+        const err = new Error('OUT_OF_STOCK');
+        err.code = 'OUT_OF_STOCK';
+        err.productName = it.productName;
+        throw err;
+      }
+    }
+    insItem.run(orderId, it.productId, it.productName, it.size || '', it.color || '', it.qty, it.unitPrice);
+  });
   return orderId;
 });
 

@@ -93,6 +93,8 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err);
+  // сбрасываем возможный админский лейаут, чтобы страница ошибки была публичной
+  res.locals.layout = 'layouts/main';
   res.status(500).render('errors/500', { title: 'Ошибка сервера' });
 });
 

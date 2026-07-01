@@ -55,29 +55,48 @@ router.post('/checkout', (req, res) => {
   const data = cartModel.detailed(req.session);
   if (!data.items.length) return res.redirect('/cart');
 
+  // перепроверяем наличие на момент оформления (остаток мог измениться)
+  const unavailable = data.items.find((it) => it.product.stock < it.qty);
+  if (unavailable) {
+    return res.render('cart', {
+      title: 'Корзина',
+      cart: data,
+      checkoutError: `«${unavailable.product.name}»: доступно ${unavailable.product.stock} шт. Обновите количество.`,
+    });
+  }
+
   const user = res.locals.currentUser;
   const delivery = data.total >= 5000 ? 0 : 300;
   const orderNumber = 'KP-' + Date.now().toString().slice(-6);
 
-  orderModel.createOrder(
-    {
-      number: orderNumber,
-      userId: user ? user.id : null,
-      status: 'new',
-      total: data.total,
-      delivery,
-      customerName: user ? user.name : null,
-      customerEmail: user ? user.email : null,
-    },
-    data.items.map((it) => ({
-      productId: it.product.id,
-      productName: it.product.name,
-      size: it.size,
-      color: it.color,
-      qty: it.qty,
-      unitPrice: it.unit,
-    }))
-  );
+  try {
+    orderModel.createOrder(
+      {
+        number: orderNumber,
+        userId: user ? user.id : null,
+        status: 'new',
+        total: data.total,
+        delivery,
+        customerName: user ? user.name : null,
+        customerEmail: user ? user.email : null,
+      },
+      data.items.map((it) => ({
+        productId: it.product.id,
+        productName: it.product.name,
+        size: it.size,
+        color: it.color,
+        qty: it.qty,
+        unitPrice: it.unit,
+      }))
+    );
+  } catch (e) {
+    // гонка по остаткам — возвращаем в корзину с сообщением
+    return res.render('cart', {
+      title: 'Корзина',
+      cart: cartModel.detailed(req.session),
+      checkoutError: 'Некоторых товаров не хватило на складе. Проверьте корзину.',
+    });
+  }
 
   cartModel.clear(req.session);
   res.render('cart-success', { title: 'Заказ оформлен', orderNumber, loggedIn: !!user });
