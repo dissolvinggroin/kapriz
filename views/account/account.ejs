@@ -36,9 +36,23 @@
         </div>
 
         <div class="account__panel">
-          <h2>Заказы</h2>
-          <p class="empty">У вас пока нет заказов. <a href="/catalog">Перейти в каталог →</a></p>
-          <a href="/account/wishlist" class="btn btn--dark">Моё избранное</a>
+          <h2>Мои заказы</h2>
+          <% if (!orders.length) { %>
+            <p class="empty">У вас пока нет заказов. <a href="/catalog">Перейти в каталог →</a></p>
+          <% } else { %>
+            <div class="orders">
+              <% orders.forEach(function(o) { %>
+                <a href="/account/orders/<%= o.id %>" class="order-row">
+                  <div class="order-row__main">
+                    <strong class="order-row__num"><%= o.number %></strong>
+                    <span class="order-row__date"><%= formatDate(o.created_at) %> · <%= o.item_count %> тов.</span>
+                  </div>
+                  <span class="order-status order-status--<%= o.status %>"><%= orderStatusLabel(o.status) %></span>
+                  <span class="order-row__total"><%= formatPrice(o.total + o.delivery) %></span>
+                </a>
+              <% }) %>
+            </div>
+          <% } %>
         </div>
 
       <% } else if (tab === 'settings') { %>

@@ -3,7 +3,7 @@
   function qstr(overrides) {
     var base = {
       category: filters.category, q: filters.q, minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice, size: filters.size, color: filters.color,
+      maxPrice: filters.maxPrice, size: filters.size,
       sale: filters.sale, sort: filters.sort,
     };
     Object.keys(overrides || {}).forEach(function (k) { base[k] = overrides[k]; });
@@ -20,7 +20,6 @@
   if (filters.q) chips.push({ label: 'Поиск: ' + filters.q, href: qstr({ q: '' }) });
   if (activeCat) chips.push({ label: activeCat.name, href: qstr({ category: '' }) });
   if (filters.size) chips.push({ label: 'Размер: ' + filters.size, href: qstr({ size: '' }) });
-  if (filters.color) chips.push({ label: 'Цвет: ' + filters.color, href: qstr({ color: '' }) });
   if (filters.minPrice) chips.push({ label: 'от ' + filters.minPrice + ' ₽', href: qstr({ minPrice: '' }) });
   if (filters.maxPrice) chips.push({ label: 'до ' + filters.maxPrice + ' ₽', href: qstr({ maxPrice: '' }) });
   if (filters.sale === '1') chips.push({ label: 'Со скидкой', href: qstr({ sale: '' }) });
@@ -70,18 +69,6 @@
             <label class="chip">
               <input type="radio" name="size" value="<%= s %>" <%= filters.size === s ? 'checked' : '' %>>
               <span><%= s %></span>
-            </label>
-          <% }) %>
-        </div>
-      </div>
-
-      <div class="filters__group">
-        <h4>Цвет</h4>
-        <div class="color-filters">
-          <% facets.colors.forEach(function(c) { %>
-            <label class="color-filter <%= filters.color === c ? 'is-active' : '' %>" title="<%= c %>">
-              <input type="radio" name="color" value="<%= c %>" <%= filters.color === c ? 'checked' : '' %> hidden>
-              <span class="swatch swatch--lg" style="background: <%= colorHex(c) %>"></span>
             </label>
           <% }) %>
         </div>

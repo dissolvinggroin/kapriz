@@ -1,0 +1,55 @@
+<div class="adm-head">
+  <h2>Заказ <%= order.number %></h2>
+  <a href="/admin/orders" class="adm-link">← Ко всем заказам</a>
+</div>
+
+<div class="adm-cols">
+  <div class="adm-panel">
+    <h3>Состав заказа</h3>
+    <table class="adm-table">
+      <thead><tr><th>Товар</th><th>Параметры</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr></thead>
+      <tbody>
+        <% items.forEach(function(it) { %>
+          <tr>
+            <td>
+              <% if (it.product_id) { %>
+                <a href="/catalog/<%= it.product_id %>" class="adm-link" target="_blank" rel="noopener"><%= it.product_name %></a>
+              <% } else { %>
+                <%= it.product_name %>
+              <% } %>
+            </td>
+            <td class="adm-muted"><%= [it.size ? 'Размер: ' + it.size : '', it.color ? 'Цвет: ' + it.color : ''].filter(Boolean).join(' · ') || '—' %></td>
+            <td><%= formatPrice(it.unit_price) %></td>
+            <td><%= it.qty %></td>
+            <td><%= formatPrice(it.unit_price * it.qty) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <div class="adm-order-totals">
+      <div><span>Товары</span><span><%= formatPrice(order.total) %></span></div>
+      <div><span>Доставка</span><span><%= order.delivery > 0 ? formatPrice(order.delivery) : 'Бесплатно' %></span></div>
+      <div class="adm-order-totals__grand"><span>Итого</span><strong><%= formatPrice(order.total + order.delivery) %></strong></div>
+    </div>
+  </div>
+
+  <div class="adm-panel">
+    <h3>Покупатель</h3>
+    <p><strong><%= (customer && customer.name) || order.customer_name || 'Гость' %></strong></p>
+    <p class="adm-muted"><%= (customer && customer.email) || order.customer_email || '—' %></p>
+    <p class="adm-muted">Оформлен: <%= formatDate(order.created_at) %></p>
+
+    <h3 style="margin-top:24px;">Статус заказа</h3>
+    <p><span class="order-status order-status--<%= order.status %>"><%= statusLabel(order.status) %></span></p>
+    <form method="POST" action="/admin/orders/<%= order.id %>/status" class="adm-status-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <label class="sr-only" for="statusSel">Новый статус</label>
+      <select id="statusSel" name="status">
+        <% statuses.forEach(function(s) { %>
+          <option value="<%= s.key %>" <%= order.status === s.key ? 'selected' : '' %>><%= s.label %></option>
+        <% }) %>
+      </select>
+      <button type="submit" class="adm-btn adm-btn--accent">Обновить статус</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="adm-head"><h2>Заказы <span>(<%= orders.length %>)</span></h2></div>
+
+<div class="adm-panel">
+  <table class="adm-table">
+    <thead><tr><th>Номер</th><th>Покупатель</th><th>Товаров</th><th>Сумма</th><th>Статус</th><th>Дата</th><th></th></tr></thead>
+    <tbody>
+      <% orders.forEach(function(o) { %>
+        <tr>
+          <td><strong><%= o.number %></strong></td>
+          <td><%= o.user_name || o.customer_name || 'Гость' %><br><span class="adm-muted"><%= o.user_email || o.customer_email || '' %></span></td>
+          <td><%= o.item_count %></td>
+          <td><%= formatPrice(o.total + o.delivery) %></td>
+          <td><span class="order-status order-status--<%= o.status %>"><%= statusLabel(o.status) %></span></td>
+          <td><%= formatDate(o.created_at) %></td>
+          <td class="adm-actions"><a href="/admin/orders/<%= o.id %>" class="adm-link">Открыть</a></td>
+        </tr>
+      <% }) %>
+      <% if (orders.length === 0) { %><tr><td colspan="7" class="adm-empty">Заказов пока нет.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>

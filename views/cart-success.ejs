@@ -6,9 +6,17 @@
   </div>
   <h1>Спасибо за заказ!</h1>
   <p class="order-success__num">Номер заказа: <strong><%= orderNumber %></strong></p>
-  <p class="order-success__text">Мы отправили подтверждение на вашу почту и свяжемся с вами для уточнения деталей доставки.</p>
-  <div class="order-success__actions">
-    <a href="/catalog" class="btn btn--accent btn--lg">Продолжить покупки</a>
-    <a href="/account" class="btn btn--ghost btn--lg">В личный кабинет</a>
-  </div>
+  <% if (typeof loggedIn !== 'undefined' && loggedIn) { %>
+    <p class="order-success__text">Мы свяжемся с вами для уточнения деталей доставки. Статус заказа можно отслеживать в личном кабинете.</p>
+    <div class="order-success__actions">
+      <a href="/account" class="btn btn--accent btn--lg">Мои заказы</a>
+      <a href="/catalog" class="btn btn--ghost btn--lg">Продолжить покупки</a>
+    </div>
+  <% } else { %>
+    <p class="order-success__text">Мы свяжемся с вами для уточнения деталей доставки. Войдите в аккаунт, чтобы отслеживать статус заказов.</p>
+    <div class="order-success__actions">
+      <a href="/catalog" class="btn btn--accent btn--lg">Продолжить покупки</a>
+      <a href="/login" class="btn btn--ghost btn--lg">Войти</a>
+    </div>
+  <% } %>
 </section>

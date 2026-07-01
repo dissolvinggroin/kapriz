@@ -1,6 +1,7 @@
 const express = require('express');
 const cartModel = require('../models/cartModel');
 const productModel = require('../models/productModel');
+const orderModel = require('../models/orderModel');
 
 const router = express.Router();
 
@@ -53,9 +54,33 @@ router.get('/', (req, res) => {
 router.post('/checkout', (req, res) => {
   const data = cartModel.detailed(req.session);
   if (!data.items.length) return res.redirect('/cart');
+
+  const user = res.locals.currentUser;
+  const delivery = data.total >= 5000 ? 0 : 300;
   const orderNumber = 'KP-' + Date.now().toString().slice(-6);
+
+  orderModel.createOrder(
+    {
+      number: orderNumber,
+      userId: user ? user.id : null,
+      status: 'new',
+      total: data.total,
+      delivery,
+      customerName: user ? user.name : null,
+      customerEmail: user ? user.email : null,
+    },
+    data.items.map((it) => ({
+      productId: it.product.id,
+      productName: it.product.name,
+      size: it.size,
+      color: it.color,
+      qty: it.qty,
+      unitPrice: it.unit,
+    }))
+  );
+
   cartModel.clear(req.session);
-  res.render('cart-success', { title: 'Заказ оформлен', orderNumber });
+  res.render('cart-success', { title: 'Заказ оформлен', orderNumber, loggedIn: !!user });
 });
 
 // HTML выезжающей панели — подгружается AJAX-ом, без основного лейаута

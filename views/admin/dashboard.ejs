@@ -1,11 +1,34 @@
 <div class="adm-stats">
-  <div class="adm-stat adm-stat--a"><span class="adm-stat__val"><%= stats.products %></span><span class="adm-stat__label">Товаров</span></div>
-  <div class="adm-stat adm-stat--b"><span class="adm-stat__val"><%= stats.categories %></span><span class="adm-stat__label">Категорий</span></div>
+  <div class="adm-stat adm-stat--c"><span class="adm-stat__val"><%= stats.orders %></span><span class="adm-stat__label">Заказов</span></div>
+  <div class="adm-stat adm-stat--a"><span class="adm-stat__val"><%= stats.newOrders %></span><span class="adm-stat__label">Новых заказов</span></div>
+  <div class="adm-stat adm-stat--b"><span class="adm-stat__val"><%= stats.products %></span><span class="adm-stat__label">Товаров</span></div>
+  <div class="adm-stat adm-stat--d"><span class="adm-stat__val"><%= stats.categories %></span><span class="adm-stat__label">Категорий</span></div>
   <div class="adm-stat adm-stat--c"><span class="adm-stat__val"><%= stats.users %></span><span class="adm-stat__label">Пользователей</span></div>
   <div class="adm-stat adm-stat--d"><span class="adm-stat__val"><%= stats.reviews %></span><span class="adm-stat__label">Отзывов</span></div>
   <div class="adm-stat adm-stat--e"><span class="adm-stat__val"><%= stats.wishlist %></span><span class="adm-stat__label">В избранном</span></div>
-  <div class="adm-stat adm-stat--b"><span class="adm-stat__val"><%= stats.avgRating %>★</span><span class="adm-stat__label">Средний рейтинг</span></div>
   <div class="adm-stat adm-stat--a"><span class="adm-stat__val"><%= stats.lowStock %></span><span class="adm-stat__label">Заканчиваются</span></div>
+</div>
+
+<div class="adm-panel">
+  <div class="adm-panel__head"><h3>Последние заказы</h3><a href="/admin/orders" class="adm-link">Все заказы →</a></div>
+  <% if (!recentOrders.length) { %>
+    <p class="adm-empty">Заказов пока нет.</p>
+  <% } else { %>
+    <table class="adm-table">
+      <thead><tr><th>Номер</th><th>Покупатель</th><th>Сумма</th><th>Статус</th><th>Дата</th></tr></thead>
+      <tbody>
+        <% recentOrders.forEach(function(o) { %>
+          <tr>
+            <td><a href="/admin/orders/<%= o.id %>" class="adm-link"><%= o.number %></a></td>
+            <td><%= o.user_name || o.customer_name || 'Гость' %></td>
+            <td><%= formatPrice(o.total + o.delivery) %></td>
+            <td><span class="order-status order-status--<%= o.status %>"><%= orderStatusLabel(o.status) %></span></td>
+            <td><%= formatDate(o.created_at) %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
 </div>
 
 <div class="adm-cols">
@@ -35,7 +58,7 @@
           <li>
             <div class="adm-reviews__top"><strong><%= r.author_name %></strong><span><%= r.rating %>★</span></div>
             <p><%= r.body %></p>
-            <em><%= r.product_name %></em>
+            <a href="/catalog/<%= r.product_id %>" class="adm-link" target="_blank" rel="noopener"><%= r.product_name %> →</a>
           </li>
         <% }) %>
       </ul>

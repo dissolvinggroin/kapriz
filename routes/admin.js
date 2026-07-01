@@ -5,6 +5,7 @@ const categoryModel = require('../models/categoryModel');
 const userModel = require('../models/userModel');
 const reviewModel = require('../models/reviewModel');
 const wishlistModel = require('../models/wishlistModel');
+const orderModel = require('../models/orderModel');
 const { slugify, splitCsv } = require('../utils/format');
 
 const router = express.Router();
@@ -65,10 +66,45 @@ router.get('/', (req, res) => {
       wishlist: wishlistModel.count(),
       avgRating: productModel.averageRating(),
       lowStock: productModel.countLowStock(5),
+      orders: orderModel.count(),
+      newOrders: orderModel.countByStatus('new'),
     },
     topWishlisted: wishlistModel.topProducts(5),
     recentReviews: reviewModel.getRecent(6),
+    recentOrders: orderModel.getAll().slice(0, 6),
+    orderStatusLabel: orderModel.statusLabel,
   });
+});
+
+// Orders
+router.get('/orders', (req, res) => {
+  res.render('admin/orders/list', {
+    title: 'Заказы',
+    orders: orderModel.getAll(),
+    statusLabel: orderModel.statusLabel,
+    statuses: orderModel.STATUSES,
+  });
+});
+
+router.get('/orders/:id', (req, res, next) => {
+  const order = orderModel.getById(req.params.id);
+  if (!order) return next();
+  const user = order.user_id ? userModel.findById(order.user_id) : null;
+  res.render('admin/orders/detail', {
+    title: 'Заказ ' + order.number,
+    order,
+    items: orderModel.getItems(order.id),
+    customer: user,
+    statusLabel: orderModel.statusLabel,
+    statuses: orderModel.STATUSES,
+  });
+});
+
+router.post('/orders/:id/status', (req, res, next) => {
+  const order = orderModel.getById(req.params.id);
+  if (!order) return next();
+  orderModel.updateStatus(order.id, req.body.status);
+  res.redirect('/admin/orders/' + order.id);
 });
 
 // Products (с поиском и фильтром по категории)

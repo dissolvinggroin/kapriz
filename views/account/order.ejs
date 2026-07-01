@@ -1,0 +1,59 @@
+<%
+  var flow = ['new', 'processing', 'shipped', 'delivered'];
+  var isCancelled = order.status === 'cancelled';
+  var activeIdx = flow.indexOf(order.status);
+%>
+<section class="container order-detail">
+  <nav class="crumbs"><a href="/">Главная</a> / <a href="/account">Личный кабинет</a> / <span>Заказ <%= order.number %></span></nav>
+
+  <div class="order-detail__head">
+    <div>
+      <h1>Заказ <%= order.number %></h1>
+      <p class="order-detail__date">Оформлен <%= formatDate(order.created_at) %></p>
+    </div>
+    <span class="order-status order-status--<%= order.status %>"><%= statusLabel(order.status) %></span>
+  </div>
+
+  <% if (isCancelled) { %>
+    <div class="order-track order-track--cancelled">Заказ отменён.</div>
+  <% } else { %>
+    <ol class="order-track">
+      <% flow.forEach(function(s, i) { %>
+        <li class="order-track__step <%= i <= activeIdx ? 'is-done' : '' %> <%= i === activeIdx ? 'is-current' : '' %>">
+          <span class="order-track__dot"></span>
+          <span class="order-track__label"><%= statusLabel(s) %></span>
+        </li>
+      <% }) %>
+    </ol>
+  <% } %>
+
+  <div class="order-detail__grid">
+    <div class="order-detail__items">
+      <% items.forEach(function(it) { %>
+        <div class="order-item">
+          <div class="order-item__info">
+            <% if (it.product_id) { %>
+              <a href="/catalog/<%= it.product_id %>" class="order-item__name"><%= it.product_name %></a>
+            <% } else { %>
+              <span class="order-item__name"><%= it.product_name %></span>
+            <% } %>
+            <span class="order-item__meta">
+              <% if (it.size) { %>Размер: <strong><%= it.size %></strong><% } %>
+              <% if (it.color) { %> · Цвет: <strong><%= it.color %></strong><% } %>
+            </span>
+          </div>
+          <span class="order-item__qty"><%= formatPrice(it.unit_price) %> × <%= it.qty %></span>
+          <span class="order-item__sum"><%= formatPrice(it.unit_price * it.qty) %></span>
+        </div>
+      <% }) %>
+    </div>
+
+    <aside class="order-detail__summary">
+      <h3>Итого</h3>
+      <div class="cart-summary__row"><span>Товары</span><span><%= formatPrice(order.total) %></span></div>
+      <div class="cart-summary__row"><span>Доставка</span><span><%= order.delivery > 0 ? formatPrice(order.delivery) : 'Бесплатно' %></span></div>
+      <div class="cart-summary__total"><span>К оплате</span><strong><%= formatPrice(order.total + order.delivery) %></strong></div>
+      <a href="/account" class="cart-summary__continue">← Ко всем заказам</a>
+    </aside>
+  </div>
+</section>

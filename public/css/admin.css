@@ -93,6 +93,26 @@ table { border-collapse: collapse; width: 100%; }
 .stock-pill--low { background: #faf0d4; color: #9a7b15; }
 .stock-pill--out { background: #f0e3e1; color: #b3392b; }
 
+.adm-link { color: var(--teal); font-weight: 600; }
+.adm-link:hover { text-decoration: underline; }
+.adm-muted { color: var(--muted); font-size: .82rem; }
+.adm-panel__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.adm-panel__head h3 { margin: 0; }
+
+/* Статусы заказа */
+.order-status { display: inline-block; padding: 4px 11px; border-radius: 999px; font-weight: 700; font-size: .78rem; white-space: nowrap; background: var(--line); color: var(--ink); }
+.order-status--new { background: #eef1ff; color: #3a52cc; }
+.order-status--processing { background: #faf0d4; color: #9a7b15; }
+.order-status--shipped { background: #e6f0fb; color: #2563a8; }
+.order-status--delivered { background: #e3f3eb; color: #0e6b5c; }
+.order-status--cancelled { background: #f0e3e1; color: #b3392b; }
+
+.adm-order-totals { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin-left: auto; }
+.adm-order-totals > div { display: flex; justify-content: space-between; font-size: .92rem; color: #4f463d; }
+.adm-order-totals__grand { border-top: 1px solid var(--line); padding-top: 10px; font-size: 1.05rem; color: var(--ink); }
+.adm-status-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.adm-status-form select { padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 9px; font-family: inherit; font-size: .92rem; }
+
 @media (max-width: 900px) {
   .adm__side { width: 64px; padding: 20px 8px; }
   .adm__logo span, .adm__nav a span, .adm__back { display: none; }

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const { requireAuth } = require('../middleware/auth');
 const wishlistModel = require('../models/wishlistModel');
 const userModel = require('../models/userModel');
+const orderModel = require('../models/orderModel');
 
 const router = express.Router();
 
@@ -15,6 +16,8 @@ function renderAccount(res, tab, extra = {}) {
     tab,
     wishlist: wishlistModel.getProducts(userId),
     wishlistIds: wishlistModel.getIds(userId),
+    orders: orderModel.getByUser(userId),
+    orderStatusLabel: orderModel.statusLabel,
     notice: null,
     error: null,
     ...extra,
@@ -24,6 +27,19 @@ function renderAccount(res, tab, extra = {}) {
 router.get('/', (req, res) => renderAccount(res, 'profile'));
 router.get('/wishlist', (req, res) => renderAccount(res, 'wishlist'));
 router.get('/settings', (req, res) => renderAccount(res, 'settings'));
+
+// Детали заказа (только свои)
+router.get('/orders/:id', (req, res, next) => {
+  const order = orderModel.getById(req.params.id);
+  if (!order || order.user_id !== res.locals.currentUser.id) return next();
+  res.render('account/order', {
+    title: 'Заказ ' + order.number,
+    order,
+    items: orderModel.getItems(order.id),
+    statusLabel: orderModel.statusLabel,
+    statuses: orderModel.STATUSES,
+  });
+});
 
 // Обновление профиля (имя, email)
 router.post('/profile', (req, res) => {

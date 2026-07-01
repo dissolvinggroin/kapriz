@@ -9,7 +9,7 @@
           <td><%= r.author_name %></td>
           <td><%= r.rating %>★</td>
           <td class="adm-review-text"><%= r.body %></td>
-          <td><%= r.product_name %></td>
+          <td><a href="/catalog/<%= r.product_id %>" class="adm-link" target="_blank" rel="noopener"><%= r.product_name %></a></td>
           <td><%= formatDate(r.created_at) %></td>
           <td class="adm-actions">
             <form method="POST" action="/admin/reviews/<%= r.id %>/delete" onsubmit="return confirm('Удалить отзыв?')">

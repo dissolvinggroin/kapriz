@@ -65,7 +65,35 @@ CREATE TABLE IF NOT EXISTS wishlist (
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS orders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  number TEXT UNIQUE NOT NULL,
+  user_id INTEGER,
+  status TEXT NOT NULL DEFAULT 'new',
+  total REAL NOT NULL,
+  delivery REAL NOT NULL DEFAULT 0,
+  customer_name TEXT,
+  customer_email TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL,
+  product_id INTEGER,
+  product_name TEXT NOT NULL,
+  size TEXT,
+  color TEXT,
+  qty INTEGER NOT NULL,
+  unit_price REAL NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
 CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
 CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images(product_id);
+CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
